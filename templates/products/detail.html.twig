@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}InnovShop{% endblock %}
+
+{% block body %}
+    <section class="my-10 px-5">
+    {% if previousUrl %}
+        <a href="{{ previousUrl }}" class="mx-5 text-sm text-black hover:text-blue-700">
+            <i class="fa-solid fa-circle-arrow-left"></i> Retour
+        </a>
+    {% endif %}
+        <h1 class="font-bold text-2xl text-center mb-10">{{ product.title }}</h1>
+        <div class="mx-auto max-w-6xl my-10 rounded-3xl shadow-lg shadow-blue-700">
+            <div class="grid grid-cols-3 p-5">
+                <div class="grid {% if product.option|length > 0 %}grid-rows-4 {% else %} grid-rows-3 {% endif %} col-span-2">
+                    {% if (product.image)%}
+                        <img src="{{ asset('uploads/' ~ product.image) }}" alt="{{ product.title }}" class="row-span-3 rounded-3xl h-[400px] w-full object-cover">
+                    {% else %}
+                        <div class="flex justify-center items-center h-[400px] row-span-3 text-6xl text-neutral-400 bg-white rounded-3xl">
+                            <i class="fa-solid fa-image"></i>
+                        </div>
+                    {% endif %}
+
+                    {# Options #}
+                    {% if product.option|length > 0 %}
+                    <fieldset class="my-auto">
+                        <legend class="font-bold italic underline underline-offset-4 text-lg my-2">Options disponibles :</legend>
+                        <div class="flex gap-2">
+                        {% for option in product.option %}
+                            <label for="{{ option.id }}" class="cursor-pointer rounded-full px-2 py-2 bg-white text-xs text-black border border-blue-700 has-checked:bg-blue-700 has-checked:text-white transition">
+                                <input type="radio" id="{{ option.id }}" name="option" class="sr-only">{{ option.name }}
+                            </label>
+                        {% endfor %}
+                        </div>
+                    </fieldset>
+                    {% endif %}
+                </div>
+                <div class="grid {% if product.option|length > 0 %}grid-rows-4 {% else %} grid-rows-3 {% endif %}">
+                    <div class="row-span-3 flex flex-col justify-center items-center mx-auto gap-10">
+                        <p class="text-xl font-semibold">Prix TTC : {{ product.price|number_format(2, ',', ' ') }}€</p>
+                        {% if product.stock >= 1 %}
+                            <form method="post" action="{{ path('app_products_add_to_cart', {id: product.id}) }}" class="grid grid-cols-2 text-center mx-auto mb-5 gap-5">
+                                <label for="qty" class="text-black text-sm text-right">Quantité :</label>
+                                    
+                                <input id="qty" type="number" min="1" max="{% if cart and cart.orderLines|length > 0 %}
+                                        {% set productInCart = false %}
+                                        {% for line in cart.orderLines %}
+                                            {% if line.product.id == product.id %}
+                                                {% set productInCart = line %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if productInCart %}
+                                            {{product.stock - productInCart.quantity}}
+                                        {% else %}
+                                            {{product.stock}}
+                                        {% endif %}
+                                    {% else %}
+                                        {{product.stock}}
+                                    {% endif %}" name="quantity" value="1" class="w-10 text-center bg-white text-black text-sm">
+                                    
+                                    
+                                <input type="hidden" name="redirect" value="{{ app.request.uri }}">
+                                <button class="border border-blue-700 hover:bg-blue-700 text-black text-md font-semibold rounded-3xl p-2 mt-5 cursor-pointer col-span-2">Ajouter au panier <i class="fa-solid fa-cart-plus"></i></button>
+                            </form>
+                        {% else %}
+                            <p class="text-black">Rupture de stock</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="p-5">
+                <h2 class="font-bold italic underline underline-offset-4 text-lg mb-2">Description :</h2>
+                <div class="text-black text-sm">
+                    <p>{{ product.description|raw }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

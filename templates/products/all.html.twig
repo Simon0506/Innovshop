@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}InnovShop{% endblock %}
+
+{% block body %}
+    <section class="my-10 mx-5">
+        <h1 class="font-bold text-2xl text-center mb-10">Tous les produits</h1>
+        <div class="flex flex-wrap justify-center items-center gap-10">
+        {% for product in products %}
+            <article class="rounded-3xl flex flex-col shadow-lg shadow-blue-700 w-3xs">
+                <div class="w-full h-[150px]">
+                    <a href="{{ path('app_products_detail', {id: product.id, slug: product.slug }) }}">
+                        {% if (product.image)%}
+                        <img src="{{ asset('uploads/' ~ product.image) }}" alt="{{ product.title }}" class="rounded-t-3xl object-cover w-full h-full">
+                        {% else %}
+                        <div class="flex justify-center items-center h-full w-full text-6xl text-neutral-400 bg-white rounded-t-3xl">
+                            <i class="fa-solid fa-image"></i>
+                        </div>
+                        {% endif %}
+                    </a>
+                </div>
+                <div class="mx-5 h-[200px] flex flex-col justify-between">
+                    <h3 class="font-semibold text-center text-md mt-2"><a href="{{ path('app_products_detail', {id: product.id, slug: product.slug }) }}">{{ product.title }}{% if product.option|length > 0 %} - {{ product.option|first }}{% endif %}</a></h3>
+                    {% if product.option|length > 1 %}
+                        <p class="text-xs text-green-700 text-center italic">{{ product.option|length }} options disponibles</p>
+                    {% endif %}
+                    <div class="text-black text-justify text-sm line-clamp-3">
+                        <p>{{ product.description|raw }}</p>
+                    </div>
+                    <div class="flex justify-between items-center gap-3 mb-2">
+                        {% if (product.stock > 0) %}
+                            <p class="font-semibold text-lg">{{ product.price|number_format(2, ',', ' ') }} €</p>
+
+                            {% if cart and cart.orderLines|length > 0 %}
+                                {% set productInCart = false %}
+                                {% for line in cart.orderLines %}
+                                    {% if line.product.id == product.id %}
+                                        {% set productInCart = line %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% if productInCart %}
+                                    <div class="grid grid-cols-3 items-center">
+                                        <form method="post" action="{{ path('app_products_remove_to_cart', {id: product.id}) }}">
+                                            <input type="hidden" name="quantity" value="1">
+                                            <input type="hidden" name="redirect" value="{{ app.request.uri }}">
+                                            <button class="border border-blue-700 hover:bg-blue-700 rounded-2xl px-1 text-black text-sm cursor-pointer">
+                                                {% if productInCart.quantity > 1 %}
+                                                    <i class="fa-solid fa-minus"></i>
+                                                {% else %}
+                                                    <i class="fa-solid fa-trash"></i>
+                                                {% endif %}
+                                            </button>
+                                        </form>
+                                        <p class="px-2 text-md text-center font-semibold text-black">{{ productInCart.quantity }}</p>
+                                        <form method="post" action="{{ path('app_products_add_to_cart', {id: product.id}) }}" class="justify-center flex flex-col">
+                                            <input type="hidden" name="quantity" value="1">
+                                            <input type="hidden" name="redirect" value="{{ app.request.uri }}">
+                                            {% if productInCart.quantity < product.stock %}
+                                                <button class="border border-blue-700 hover:bg-blue-700 rounded-2xl text-black text-sm cursor-pointer">
+                                                    <i class="fa-solid fa-plus"></i>
+                                                </button>
+                                            {% else %}
+                                                <p class="text-xs text-center text-black">MAX</p>
+                                            {% endif %}
+                                        </form>
+                                    </div>
+                                {% else %}
+                                    <form method="post" action="{{ path('app_products_add_to_cart', {id: product.id}) }}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <input type="hidden" name="redirect" value="{{ app.request.uri }}">
+                                        <button class="border border-blue-700 hover:bg-blue-700 text-black text-lg rounded-3xl px-2 cursor-pointer"><i class="fa-solid fa-cart-plus"></i></button>
+                                    </form>
+                                {% endif %}
+
+                            {% else %}
+                                <form method="post" action="{{path('app_products_add_to_cart', {id: product.id})}}">
+                                    <input type="hidden" name="quantity" value="1">
+                                    <input type="hidden" name="redirect" value="{{ app.request.uri }}">
+                                    <button class="border border-blue-700 hover:bg-blue-700 text-black text-lg rounded-3xl px-2 cursor-pointer"><i class="fa-solid fa-cart-plus"></i></button>
+                                </form>
+                            {% endif %}
+                        {% else %}
+                            <p class="text-lg text-black">{{ product.price|number_format(2, ',', ' ') }} €</p>
+                            <p class="text-red-700 text-sm font-bold">Rupture de stock</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </article> 
+        {% endfor %}               
+        </div>
+    </section>
+{% endblock %}

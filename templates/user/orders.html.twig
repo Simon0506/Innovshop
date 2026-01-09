@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes commandes{% endblock %}
+
+{% block body %}
+    <h1 class="font-bold text-center text-2xl my-10">Mes commandes</h1>
+    <div class="mx-5">
+        {% if ordersValidated|length > 0 or ordersDelivered|length > 0 %}
+        <div class="max-w-6xl w-full mx-auto bg-neutral-400 shadow-lg shadow-black text-sm rounded-t-2xl mb-10">
+            <table class="border-collapse w-full">
+                <thead>
+                    <tr class="bg-purple-400 text-black font-semibold rounded-t-2xl grid grid-cols-8 items-center border border-purple-700 ">
+                        <th class="h-full w-full flex items-center justify-center border-r border-r-purple-700 p-2">Numéro de commande</th>
+                        <th class="h-full w-full flex items-center justify-center border-r border-r-purple-700 p-2">Date</th>
+                        <th class="h-full w-full flex items-center justify-center col-span-3 border-r border-r-purple-700 p-2">Produits commandés</th>
+                        <th class="h-full w-full flex items-center justify-center border-r border-r-purple-700 p-2">Prix TTC</th>
+                        <th class="h-full w-full flex items-center justify-center border-r border-r-purple-700 p-2">Statut</th>
+                        <th class="h-full w-full flex items-center justify-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for line in ordersValidated %}
+                        <tr class="text-black grid grid-cols-8 items-center border border-purple-700">
+                            <th class="h-full w-full font-medium flex items-center justify-center border-r border-r-purple-700 p-2">{{ line.order.numero }}</th>
+                            <th class="h-full w-full font-medium flex items-center justify-center border-r border-r-purple-700 p-2">{{ line.order.date|format('d/m/Y') }}</th>
+                            <th class="h-full w-full font-medium grid grid-cols-2 items-center col-span-3 border-r border-r-purple-700 p-2 gap-5">
+                                {% set item = line.order.orderLines|first %}
+                                <div class="flex items-center">
+                                    {% if (item.product.image)%}
+                                    <img src="{{ asset('uploads/' ~ item.product.image) }}" alt="{{ item.product.title }}" class="rounded-2xl object-cover w-20 h-20">
+                                    {% else %}
+                                    <div class="flex justify-center items-center h-10 w-10 text-xl text-neutral-400 bg-white rounded-t-3xl">
+                                        <i class="fa-solid fa-image"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div class="flex flex-col text-xs">
+                                        <p>{{ item.product.title }}</p>
+                                        <p>Quantité : {{ item.quantity }}
+                                    </div>
+                                </div>
+                                {% if line.quantity > 1 %}
+                                <p> + {{ line.quantity - 1 }} autre{% if line.quantity > 2 %}s{% endif %} produits</p>
+                                {% endif %}
+                            </th>
+                            <th class="h-full w-full font-medium flex items-center justify-center border-r border-r-purple-700 p-2">{{ line.order.total|number_format(2, ',', ' ')}} €</th>
+                            <th class="h-full w-full font-medium text-green-700 flex items-center justify-center gap-2 border-r border-r-purple-700 p-2">{{ line.order.status }}<i class="fa-solid fa-circle-check"></i></th>
+                            <th class="h-full w-full font-medium flex flex-col gap-1 items-center justify-center p-2">
+                                <a href="" class="hover:underline">Détail</a>
+                                <a href="" class="text-red-700 hover:underline">Annuler</a>
+                            </th>
+                        </tr>
+                    {% endfor %}
+                    {% for line in ordersDelivered %}
+                        <tr class="text-black grid grid-cols-8 items-center border border-purple-700">
+                            <th class="h-full w-full font-medium flex items-center justify-center border-r border-r-purple-700 p-2">{{ line.order.numero }}</th>
+                            <th class="h-full w-full font-medium flex items-center justify-center border-r border-r-purple-700 p-2">{{ line.order.date|format('d/m/Y') }}</th>
+                            <th class="h-full w-full font-medium {% if line.quantity > 1 %}grid grid-cols-2{% else %}flex{% endif %} items-center col-span-3 border-r border-r-purple-700 p-2 gap-5">
+                                {% set item = line.order.orderLines|first %}
+                                <div class="flex items-center">
+                                    {% if (item.product.image)%}
+                                    <img src="{{ asset('uploads/' ~ item.product.image) }}" alt="{{ item.product.title }}" class="rounded-2xl object-cover w-20 h-20">
+                                    {% else %}
+                                    <div class="flex justify-center items-center h-10 w-10 text-xl text-neutral-400 bg-white rounded-t-3xl">
+                                        <i class="fa-solid fa-image"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div class="flex flex-col text-xs">
+                                        <p>{{ item.product.title }}</p>
+                                        <p>Quantité : {{ item.quantity }}
+                                    </div>
+                                </div>
+                                {% if line.quantity > 1 %}
+                                <p> + {{ line.quantity - 1 }} autre{% if line.quantity > 2 %}s{% endif %} produits</p>
+                                {% endif %}
+                            </th>
+                            <th class="h-full w-full font-medium flex items-center justify-center border-r border-r-purple-700 p-2">{{ line.order.total|number_format(2, ',', ' ')}} €</th>
+                            <th class="h-full w-full font-medium text-purple-700 flex items-center justify-center gap-2 border-r border-r-purple-700 p-2">{{ line.order.status|raw }}<i class="fa-solid fa-truck"></i></th>
+                            <th class="h-full w-full font-medium flex flex-col gap-1 items-center justify-center p-2">
+                                <a href="" class="hover:underline">Détail</a>
+                                <a href="" class="text-red-700 hover:underline">Annuler</a>
+                            </th>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <p class="text-black text-sm text-center">Vous n'avez aucune commande pour le moment</p>
+        {% endif %}
+        
+    </div>
+{% endblock %}

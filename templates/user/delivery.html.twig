@@ -1,0 +1,158 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil{% endblock %}
+
+{% block body %}
+    <div class="px-5">
+        {% for flash_error in app.flashes('verify_email_error') %}
+            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+        {% endfor %}
+        <h1 class="font-bold text-center text-2xl my-10">Finaliser ma commande</h1>
+        <div class="grid grid-cols-2 gap-5 max-w-6xl mx-auto my-10">
+            
+            {# Adresse de livraison #}
+            <div class="flex flex-col text-black text-sm shadow-lg shadow-blue-700 rounded-3xl px-5">
+                <h2 class="text-center text-blue-700 text-lg font-semibold my-4">Livraison</h2>
+
+                    {# Form #}
+                    <div class="flex flex-col max-w-xl mx-auto bg-blue-100 rounded-2xl items-center py-4 space-y-4 font-semibold mb-10">
+                    {{ form_start(deliveryForm, {
+                        attr: {
+                            class: 'w-full'
+                        }
+                    }) }}
+                        <div class="grid grid-cols-2 gap-5 items-center mx-5">
+                            {{ form_label(deliveryForm.name, 'Nom*') }}
+                            {{ form_widget(deliveryForm.name, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white rounded-md text-black px-2'
+                                }
+                            }) }}
+                            {{ form_errors(deliveryForm.name) }}
+
+                            {{ form_label(deliveryForm.firstName, 'Prénom*') }}
+                            {{ form_widget(deliveryForm.firstName, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white rounded-md text-black px-2'
+                                }
+                            }) }}
+                            {{ form_errors(deliveryForm.firstName) }}
+
+                            {{ form_label(deliveryForm.address, 'Adresse*') }}
+                            {{ form_widget(deliveryForm.address, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white rounded-md text-black px-2'
+                                }
+                            }) }}
+                            {{ form_errors(deliveryForm.address) }}
+
+                            {{ form_label(deliveryForm.postalCode, 'Code postal*') }}
+                            {{ form_widget(deliveryForm.postalCode, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white rounded-md text-black px-2'
+                                }
+                            }) }}
+                            {{ form_errors(deliveryForm.postalCode) }}
+
+                            {{ form_label(deliveryForm.city, 'Ville*') }}
+                            {{ form_widget(deliveryForm.city, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white rounded-md text-black px-2'
+                                }
+                            }) }}
+                            {{ form_errors(deliveryForm.city) }}
+
+                            {{ form_label(deliveryForm.phone, 'Téléphone') }}
+                            {{ form_widget(deliveryForm.phone, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white rounded-md text-black px-2'
+                                }
+                            }) }}
+                            {{ form_errors(deliveryForm.phone) }}
+
+                            {{ form_label(deliveryForm.deliveryDefault, 'Définir comme adresse de livraison par défaut ?') }}
+                            <div class="items-left">
+                                {{ form_widget(deliveryForm.deliveryDefault) }}
+                            </div>
+
+                            {{ form_errors(deliveryForm.deliveryDefault) }}
+                        </div>
+                        <button class="block ring-2 ring-purple-700 hover:bg-purple-700 text-sm text-black font-semibold rounded-3xl p-2 mx-auto mt-5 cursor-pointer" type="submit">
+                            Mettre à jour mon adresse de livraison
+                        </button>
+                        <p class="text-xs m-3">* Champs obligatoires</p>
+                    {{ form_end(deliveryForm) }}
+                </div>
+            </div>
+            
+            <div class="flex flex-col text-black text-sm shadow-lg shadow-blue-700 rounded-3xl px-5">
+                <h2 class="text-center text-blue-700 text-lg font-semibold my-4">Facturation</h2>
+                <div class="flex flex-col max-w-xl mx-auto bg-blue-100 rounded-2xl items-center py-4 space-y-4 font-semibold mb-10">
+                    {{ form_start(billingForm, {
+                        attr: {
+                            class: 'w-full'
+                        }
+                    }) }}
+                        <div class="grid grid-cols-2 gap-5 items-center mx-5">
+                            {{ form_label(billingForm.name, 'Nom*') }}
+                            {{ form_widget(billingForm.name, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white rounded-md text-black px-2',
+                                    disabled: 'disabled'
+                                }
+                            }) }}
+                            {{ form_errors(billingForm.name) }}
+
+                            {{ form_label(billingForm.firstName, 'Prénom*') }}
+                            {{ form_widget(billingForm.firstName, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white rounded-md text-black px-2'
+                                }
+                            }) }}
+                            {{ form_errors(billingForm.firstName) }}
+
+                            {{ form_label(billingForm.address, 'Adresse*') }}
+                            {{ form_widget(billingForm.address, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white rounded-md text-black px-2'
+                                }
+                            }) }}
+                            {{ form_errors(billingForm.address) }}
+
+                            {{ form_label(billingForm.postalCode, 'Code postal*') }}
+                            {{ form_widget(billingForm.postalCode, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white rounded-md text-black px-2'
+                                }
+                            }) }}
+                            {{ form_errors(billingForm.postalCode) }}
+
+                            {{ form_label(billingForm.city, 'Ville*') }}
+                            {{ form_widget(billingForm.city, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white rounded-md text-black px-2'
+                                }
+                            }) }}
+                            {{ form_errors(billingForm.city) }}
+
+                            {{ form_label(billingForm.billingDefault, 'Définir comme adresse de facturation par défaut ?') }}
+                            <div class="items-left">
+                                {{ form_widget(billingForm.billingDefault) }}
+                            </div>
+
+                            {{ form_errors(billingForm.billingDefault) }}
+                        </div>
+                        <button class="block ring-2 ring-purple-700 hover:bg-purple-700 text-sm text-black font-semibold rounded-3xl p-2 mx-auto mt-5 cursor-pointer" type="submit">
+                            Mettre à jour mon adresse de facturation
+                        </button>
+                        <p class="text-xs m-3">* Champs obligatoires</p>
+                    {{ form_end(billingForm) }}
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-between items-center w-full max-w-6xl mx-auto">
+            <a href="" class="text-blue-700 text-sm font-medium hover:underline"><i class="fa-solid fa-circle-arrow-left"></i> Revenir au panier</a>
+            <a href="" class="border border-blue-700 hover:bg-blue-700 text-black text-lg font-semibold rounded-3xl p-2 m-2">Passer au paiement <i class="fa-solid fa-circle-arrow-right"></i></a>
+        </div>
+    </div>
+{% endblock %}

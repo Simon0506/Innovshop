@@ -4,14 +4,152 @@
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+        <script src="https://kit.fontawesome.com/274d342162.js" crossorigin="anonymous"></script>
         {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
         {% endblock %}
 
         {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
+            {{ encore_entry_script_tags('app') }}
         {% endblock %}
     </head>
-    <body>
+    <body class="frontend w-full min-h-screen flex flex-col">
+    <header class="w-full p-5 bg-blue-700 h-20 fixed top-0 right-0 left-0 text-white">
+        <nav class="mx-auto flex justify-between items-center gap-3">
+            <a class="text-2xl italic font-bold my-auto" href="{{ path('app_home')}}">InnovShop</a>
+            <ul class="flex justify-center items-center gap-2 my-auto text-sm font-semibold">
+                <li><a href="{{path('app_products_all')}}" class="hover:underline">Tous les produits</a></li>
+                <li>|</li>
+                {% for category in categories %}
+                    {% if category.products|length > 0 %}
+                        <li><a href="{{path('app_products_category', {id: category.id, slug:category.slug})}}" class="hover:underline">{{ category.name }}</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            <div class="flex justify-center items-center gap-2 my-auto text-sm font-semibold relative">
+                <div id="account" class="cursor-pointer"><i class="fa-regular fa-user"></i>Mon compte</div>
+                <p>|</p>
+                <div id="cart" class="cursor-pointer">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>Panier</span>
+                    {% if cartQuantity > 0 %}
+                    <span class="text-xs bg-yellow-300 text-blue-700 rounded-3xl px-1 absolute bottom-5 right-0">{{ cartQuantity }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Déroulé du panier -->
+            <div id="cartMenu" class="hidden bg-white shadow-md shadow-blue-700 flex flex-col gap-5 fixed right-0 top-20 max-w-[500px] mx-auto px-5 rounded-bl-3xl text-black">
+                <h3 class="font-semibold text-lg text-center">Mon panier</h3>
+                {% if cart and cart.orderLines|length >0 %}
+                    <div class="max-h-[160px] overflow-y-auto flex flex-col gap-1">
+                        {% for line in cart.orderLines %}
+                            <div class="grid grid-cols-5 gap-1 items-center mx-auto text-black text-sm text-center w-full">
+                                {% if (line.product.image)%}
+                                <img src="{{ asset('uploads/' ~ line.product.image) }}" alt="{{ line.product.title }}" class="max-h-[50px] w-full rounded-md object-cover">
+                                {% else %}
+                                <div class="flex justify-center items-center h-full w-full text-black">
+                                    <i class="fa-solid fa-image"></i>
+                                </div>
+                                {% endif %}
+                                <p class="col-span-2">{{ line.product.title }}</p>
+                                <div>
+                                    <p>{{ line.subtotal|number_format(2, ',', ' ') }} €</p>
+                                    {% if line.quantity > 1 %}
+                                        <p class="text-xs">( {{ line.quantity }} x {{ line.product.price|number_format(2, ',', ' ') }} €)</p>
+                                    {% endif %}
+                                </div>
+                                <div class="grid grid-cols-3 items-center">
+                                    <form method="post" action="{{ path('app_products_remove_to_cart', {id: line.product.id}) }}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <input type="hidden" name="redirect" value="{{ app.request.uri }}">
+                                        <button class="text-black text-xs cursor-pointer">
+                                            {% if line.quantity > 1 %}
+                                                <i class="fa-solid fa-minus"></i>
+                                            {% else %}
+                                                <i class="fa-solid fa-trash"></i>
+                                            {% endif %}
+                                        </button>
+                                    </form>
+                                    <p class="text-xs text-center font-semibold text-black">{{ line.quantity }}</p>
+                                    <form method="post" action="{{ path('app_products_add_to_cart', {id: line.product.id}) }}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <input type="hidden" name="redirect" value="{{ app.request.uri }}">
+                                        {% if line.quantity < line.product.stock %}
+                                            <button class="text-black text-xs cursor-pointer">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                        {% else %}
+                                            <p class="text-xs text-center">MAX</p>
+                                        {% endif %}
+                                    </form>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="mx-auto font-bold text-lg">Sous-total : {{ cart.total|number_format(2, ',', ' ') }} €</div>
+                {% else %}
+                    <p class="text-center text-sm px-2">Votre panier est vide</p>
+                {% endif %}
+                <div class="mx-auto mb-5">
+                    <a href="{{ path('app_user_cart') }}" class="border border-blue-700 hover:bg-blue-700 text-black text-sm font-semibold rounded-3xl p-2">Voir mon panier</a>
+                </div>
+            </div>
+
+            <!-- Déroulé du compte -->
+            <div id="accountMenu" class="hidden bg-white text-black shadow-md shadow-blue-700 flex flex-col gap-5 fixed right-0 top-20 w-[300px] mx-auto rounded-bl-3xl">
+                {% if not app.user %}
+                    <p class="text-blue-700 text-center font-semibold mt-5">Aucun compte connecté.</p>
+                    <div class="mx-auto mb-5">
+                        <a href="{{ path('app_login', { redirect: app.request.uri }) }}" class="border border-blue-700 hover:bg-blue-700 text-black text-sm font-semibold rounded-3xl p-2 w-[150px]">Se connecter / S'inscrire</a>
+                    </div>
+                {% else %}
+                    <p class="text-blue-700 font-semibold text-center mt-5">Bonjour {{app.user.firstName}} {{app.user.name}}</p>
+                    <div class="mx-auto">
+                        <a href="{{path('app_user_profil')}}" class="font-semibold">Mon profil</a>
+                    </div>
+                    <div class="mx-auto">
+                        <a href="{{path('app_user_orders')}}" class="font-semibold">Mes commandes</a>
+                    </div>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <div class="mx-auto">
+                        <a href="{{path('admin')}}" class="font-semibold">Dashboard Admin</a>
+                        </div>
+                    {% endif %}
+                    <div class="mx-auto mb-5">
+                        <a href="{{ path('app_logout')}}" class="border border-blue-700 hover:bg-blue-700 text-black text-sm font-semibold rounded-3xl p-2 w-[150px]">Se déconnecter</a>
+                    </div>
+                    
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-1 mt-20 text-blue-700 w-full mx-auto">
+        {% for type, messages in app.flashes %}
+            {% for message in messages %}
+                <div
+                    class="mb-4 max-w-6xl mx-auto flex items-center justify-between rounded-lg px-4 py-3 shadow
+                    {% if type == 'success' %} bg-green-100 text-green-800
+                    {% elseif type == 'error' %} bg-red-100 text-red-800
+                    {% endif %}"
+                >
+                    <span>{{ message }}</span>
+                    <button
+                        onclick="this.parentElement.remove()"
+                        class="ml-4 font-bold hover:opacity-70"
+                    >
+                        ✕
+                    </button>
+                </div>
+            {% endfor %}
+        {% endfor %}
         {% block body %}{% endblock %}
-    </body>
+    </main>
+
+    <footer class="w-full h-20 bg-blue-700 text-white flex items-center">
+        <div class="font-semibold mx-auto items-center py-auto text-center text-sm">Copyright © 2025 InnovShop - Tous droits réservés</div>
+    </footer>
+
+</body>
 </html>

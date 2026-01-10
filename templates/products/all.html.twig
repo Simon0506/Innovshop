@@ -5,9 +5,9 @@
 {% block body %}
     <section class="my-10 mx-5">
         <h1 class="font-bold text-2xl text-center mb-10">Tous les produits</h1>
-        <div class="flex flex-wrap justify-center items-center gap-10">
+        <div class="flex flex-wrap justify-center items-center gap-3">
         {% for product in products %}
-            <article class="rounded-3xl flex flex-col shadow-lg shadow-blue-700 w-3xs">
+            <article class="rounded-3xl flex flex-col shadow-md shadow-blue-700 w-3xs">
                 <div class="w-full h-[150px]">
                     <a href="{{ path('app_products_detail', {id: product.id, slug: product.slug }) }}">
                         {% if (product.image)%}

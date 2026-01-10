@@ -14,9 +14,9 @@
         {% endblock %}
     </head>
     <body class="frontend w-full min-h-screen flex flex-col">
-    <header class="w-full p-5 bg-blue-700 h-20 fixed top-0 right-0 left-0 text-white">
-        <nav class="mx-auto flex justify-between items-center gap-3">
-            <a class="text-2xl italic font-bold my-auto" href="{{ path('app_home')}}">InnovShop</a>
+    <header class="w-full bg-[#F7F7F7] h-20 fixed top-0 right-0 left-0 text-blue-700 shadow-md shadow-blue-700">
+        <nav class="mx-auto flex justify-between items-center gap-3 h-20">
+            <a class="my-auto h-full" href="{{ path('app_home')}}"><img src="{{ asset('uploads/logo.png') }}" alt="Logo InnovShop" class="h-full w-2xs object-cover"></a>
             <ul class="flex justify-center items-center gap-2 my-auto text-sm font-semibold">
                 <li><a href="{{path('app_products_all')}}" class="hover:underline">Tous les produits</a></li>
                 <li>|</li>
@@ -26,20 +26,20 @@
                     {% endif %}
                 {% endfor %}
             </ul>
-            <div class="flex justify-center items-center gap-2 my-auto text-sm font-semibold relative">
+            <div class="flex justify-center items-center gap-2 my-auto text-sm font-semibold pr-5">
                 <div id="account" class="cursor-pointer"><i class="fa-regular fa-user"></i>Mon compte</div>
                 <p>|</p>
-                <div id="cart" class="cursor-pointer">
+                <div id="cart" class="cursor-pointer relative">
                     <i class="fa-solid fa-cart-shopping"></i>
                     <span>Panier</span>
                     {% if cartQuantity > 0 %}
-                    <span class="text-xs bg-yellow-300 text-blue-700 rounded-3xl px-1 absolute bottom-5 right-0">{{ cartQuantity }}</span>
+                    <span class="text-xs bg-blue-700 text-white rounded-3xl px-1 absolute bottom-5 right-0">{{ cartQuantity }}</span>
                     {% endif %}
                 </div>
             </div>
 
             <!-- Déroulé du panier -->
-            <div id="cartMenu" class="hidden bg-white shadow-md shadow-blue-700 flex flex-col gap-5 fixed right-0 top-20 max-w-[500px] mx-auto px-5 rounded-bl-3xl text-black">
+            <div id="cartMenu" class="hidden bg-[#F7F7F7] shadow-md shadow-blue-700 flex flex-col gap-5 fixed right-0 top-20 max-w-[500px] mx-auto px-5 rounded-bl-3xl text-black">
                 <h3 class="font-semibold text-lg text-center">Mon panier</h3>
                 {% if cart and cart.orderLines|length >0 %}
                     <div class="max-h-[160px] overflow-y-auto flex flex-col gap-1">
@@ -97,7 +97,7 @@
             </div>
 
             <!-- Déroulé du compte -->
-            <div id="accountMenu" class="hidden bg-white text-black shadow-md shadow-blue-700 flex flex-col gap-5 fixed right-0 top-20 w-[300px] mx-auto rounded-bl-3xl">
+            <div id="accountMenu" class="hidden bg-[#F7F7F7] text-black shadow-md shadow-blue-700 flex flex-col gap-5 fixed right-0 top-20 w-[300px] mx-auto rounded-bl-3xl">
                 {% if not app.user %}
                     <p class="text-blue-700 text-center font-semibold mt-5">Aucun compte connecté.</p>
                     <div class="mx-auto mb-5">
@@ -125,7 +125,7 @@
         </nav>
     </header>
 
-    <main class="flex-1 mt-20 text-blue-700 w-full mx-auto">
+    <main class="flex-1 mt-20 bg-[#F7F7F7] text-blue-700 w-full mx-auto">
         {% for type, messages in app.flashes %}
             {% for message in messages %}
                 <div
@@ -147,7 +147,7 @@
         {% block body %}{% endblock %}
     </main>
 
-    <footer class="w-full h-20 bg-blue-700 text-white flex items-center">
+    <footer class="w-full h-20 bg-[#F7F7F7] text-blue-700 ring-2 ring-blue-700 flex items-center">
         <div class="font-semibold mx-auto items-center py-auto text-center text-sm">Copyright © 2025 InnovShop - Tous droits réservés</div>
     </footer>
 

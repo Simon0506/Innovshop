@@ -1,0 +1,102 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.title }}{% endblock %}
+
+{% block body %}
+    <section class="pb-20 px-5 w-full h-full">
+        <div class="pt-5 mb-5 max-w-6xl mx-auto">
+        {% if previousUrl %}
+            <a href="{{ previousUrl }}" class="mx-5 text-sm text-black hover:text-blue-700 font-semibold">
+                <i class="fa-solid fa-circle-arrow-left"></i> Retour
+            </a>
+        {% endif %}
+        </div>
+        <div class="mx-auto max-w-4xl bg-[#F7F7F7] rounded-3xl shadow-lg shadow-blue-700 border border-sky-500">
+            <h1 class="font-bold text-2xl text-center py-5">{{ product.title }}</h1>
+            <div data-controller="product-options" data-product-options-base-price-value="{{ product.price }}" class="grid grid-cols-3 gap-5 p-5">
+                <div class="grid {% if pvs|length > 1 %}grid-rows-4 {% else %} grid-rows-3 {% endif %} col-span-2">
+                    <div data-controller="product-images" class="row-span-3 rounded-3xl overflow-hidden h-[400px] flex relative">
+                        {% if product.images|length > 1 %}
+                            <button data-action="product-images#prev" class="absolute left-2 top-1/2 -translate-y-1/2 bg-linear-to-t from-sky-500 to-blue-700 text-white p-3 rounded-full hover:bg-black cursor-pointer z-2">
+                                ‹
+                            </button>
+                            <button data-action="product-images#next" class="absolute right-2 top-1/2 -translate-y-1/2 bg-linear-to-t from-sky-500 to-blue-700 text-white p-3 rounded-full hover:bg-black cursor-pointer z-2">
+                                ›
+                            </button>
+                            {% for img in product.images %}
+                                <img data-product-images-target="image" src="{{ asset('uploads/' ~ img.filename) }}" alt="{{ product.title }}" class="object-cover w-full h-full">
+                            {% endfor %}
+                            <div data-product-images-target="counter" class="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded-full">
+                                1 / {{ product.images|length }}
+                            </div>
+                        {% elseif product.images|length == 1 %}
+                            <img src="{{ asset('uploads/' ~ product.images|first.filename) }}" alt="{{ product.title }}" class="object-cover w-full h-full">
+                        {% else %}
+                            <img src="{{ asset('uploads/no-photo.jpg') }}" alt="Image par défaut" class="object-cover w-full h-full">
+                        {% endif %}
+                    </div>
+
+                    {# Options #}
+                    {% if pvs|length > 0 %}
+                    <fieldset class="my-auto {% if pvs|length == 1 %}hidden{% endif %}">
+                        <legend class="font-bold italic underline underline-offset-4 text-lg my-2">Options disponibles :</legend>
+                        <div class="flex gap-2">
+                        {% for pv in pvs %}
+                            <label class="cursor-pointer rounded-full px-2 py-2 text-xs text-center text-black border border-dotted border-sky-500 has-checked:bg-linear-to-t has-checked:from-sky-500 has-checked:to-blue-700 has-checked:text-white transition">
+                                <input type="radio" name="option" class="sr-only" data-action="product-options#select" data-product-options-id-value="{{ pv.id }}" data-product-options-price-value="{{ pv.price }}" data-product-options-priceht-value="{{ pv.priceHT }}" data-product-options-stock-value="{{ pv.maxquantity }}" {% if pv.maxquantity == 0 %}disabled{% endif %} {% if pv.id == firstPV.id %}checked{% endif %}>{{ pv.name }}
+                            </label>
+                        {% endfor %}
+                        </div>
+                    </fieldset>
+                    {% endif %}
+                </div>
+                <div class="grid {% if pvs|length > 0 %}grid-rows-4 {% else %} grid-rows-3 {% endif %}">
+                    <div class="row-span-3 flex flex-col justify-center items-center mx-auto gap-10">
+                        <p class="text-xl text-blue-700 font-bold items-center justify-center flex flex-col">
+                            <span>Prix TTC : <span data-product-options-target="price">-</span> €</span>
+                            <span class="text-sm text-neutral-500 mx-auto font-normal">Prix HT : <span data-product-options-target="priceht">-</span> €</span>
+                        </p>
+                        <form method="post" data-product-options-target="form" class="grid grid-cols-2 text-center mx-auto mb-5 gap-5">
+                            <label for="qty" class="text-black text-sm text-right">Quantité :</label>
+                            <input id="qty" type="number" min="1" name="quantity" value="1" data-product-options-target="quantity" class="w-10 text-center border border-sky-500 text-black text-sm rounded-md">
+                            <input type="hidden" name="redirect" value="{{ app.request.uri }}">
+                            <button data-product-options-target="submit" class="col-span-2 cursor-pointer bg-linear-to-r from-blue-700 to-sky-500 hover:shadow-md hover:shadow-black text-white font-semibold rounded-3xl px-5 py-3 text-lg mx-auto" disabled>Ajouter au panier <i class="fa-solid fa-cart-plus"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="p-5">
+                <h2 class="font-bold italic underline underline-offset-4 text-lg mb-2">Description :</h2>
+                <div class="text-black text-sm">
+                    <p>{{ product.description|raw }}</p>
+                </div>
+            </div>
+            <div class="p-5">
+                <h2 class="font-bold italic underline underline-offset-4 text-lg mb-2">Commentaires :</h2>
+                <div class="text-black text-sm">
+                    {% if product.reviews|length > 0 %}
+                        {% for review in product.reviews %}
+                            <div class="mb-5 flex flex-col gap-1 items-start">
+                                {% if review != product.reviews|first %}
+                                <div class="bg-sky-500 w-2xs h-[1px] my-3"></div>
+                                {% endif %}
+                                <p class="font-semibold">{% if review.user.firstName is not null %}{{ review.user.firstName }}{% else %}{{ review.user.name}}{% endif %} <span class="text-xs text-neutral-500">Publié le {{ review.date|date('d/m/Y') }}</span></p>
+                                <p class="text-yellow-500">
+                                    {% for i in 1..5 %}
+                                        {% if i <= review.note %}
+                                            <i class="fa-solid fa-star"></i>
+                                        {% else %}
+                                            <i class="fa-regular fa-star"></i>
+                                        {% endif %}
+                                    {% endfor %}</p>
+                                <p>{{ review.comment }}</p>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-black">Aucun commentaire pour le moment.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

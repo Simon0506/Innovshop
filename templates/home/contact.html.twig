@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}InnovShop - Accueil{% endblock %}
+
+{% block body %}
+<div class="px-5">
+    <div class="max-w-4xl mx-auto my-10 px-5 py-10 text-sm flex flex-col gap-4 bg-[#F7F7F7] rounded-3xl shadow-lg shadow-blue-700 border border-sky-500">
+        <h1 class="text-center text-2xl font-bold mb-5">Contactez-nous</h1>
+
+        <p>
+            Pour toute question, suggestion ou demande d’assistance, n’hésitez pas à nous contacter via le formulaire ci-dessous ou par email à l’adresse <a href="mailto:contact@innovshop.fr" class="text-blue-700 underline">contact@innovshop.fr</a>.
+        </p>
+
+        <form action="{{ path('app_contact_submit') }}" method="POST" class="flex flex-col gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="name" class="block font-semibold mb-1">Nom :</label>
+                    <input type="text" id="name" name="name" required class="w-full p-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label for="email" class="block font-semibold mb-1">Email :</label>
+                    <input type="email" id="email" name="email" required class="w-full p-2 border border-gray-300 rounded-lg">
+                </div>
+            </div>
+            <div>
+                <label for="message" class="block font-semibold mb-1">Message :</label>
+                <textarea id="message" name="message" rows="5" required class="w-full p-2 border border-gray-300 rounded-lg"></textarea>
+            </div>
+            <button type="submit" class="bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white font-semibold rounded-3xl px-5 py-2 text-sm self-start mx-auto cursor-pointer">
+                Envoyer
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

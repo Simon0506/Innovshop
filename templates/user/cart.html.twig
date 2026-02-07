@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon panier{% endblock %}
+
+{% block body %}
+    <h1 class="font-bold text-center text-2xl my-10">Mon panier</h1>
+    <div class="px-5 items-center flex flex-col">
+        {% if cart and cart.orderLines|length > 0 %}
+        <div class="w-full max-w-4xl mx-auto shadow-lg shadow-blue-700 text-sm rounded-2xl mb-10 bg-[#F7F7F7]">
+            <table class="border-collapse w-full">
+                <thead>
+                    <tr class="bg-linear-to-t from-sky-500 to-blue-700 text-white font-semibold rounded-t-2xl grid grid-cols-7 items-center">
+                        <th class="h-full w-full flex items-center justify-center col-span-4 p-2">Désignation du produit</th>
+                        <th class="h-full w-full flex items-center justify-center p-2">Prix unitaire</th>
+                        <th class="h-full w-full flex items-center justify-center p-2">Quantité</th>
+                        <th class="h-full w-full flex items-center justify-center p-2">Sous-total TTC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for line in cart.orderLines %}
+                        <tr class="text-black grid grid-cols-7 items-center">
+                            <th class="h-full w-full flex items-center gap-2 col-span-4 p-2">
+                                {% if (line.productVariant.product.images|length > 0)%}
+                                    <img src="{{ asset('uploads/' ~ line.productVariant.product.images|first) }}" alt="{{ line.productVariant.title }}" class="h-[50px] w-[50px] rounded-md object-cover">
+                                {% else %}
+                                    <img src="{{ asset('uploads/no-photo.jpg') }}" alt="Image par défaut" class="h-[50px] w-[50px] rounded-md object-cover">
+                                {% endif %}
+                                <p class="text-sm font-medium"><a href="{{ path('app_products_detail', {id: line.productVariant.id, slug: line.productVariant.slug }) }}">{{ line.productVariant.title }}</a></p>
+                                {% if line.productVariant.stock < 10 %}
+                                    <p class="text-red-800 text-xs"><i class="fa-solid fa-triangle-exclamation"></i> Il ne reste plus que {{ line.productVariant.stock }} exemplaire{% if line.productVariant.stock > 1 %}s{% endif %}</p>
+                                {% endif %}
+                            </th>
+                            <th class="h-full w-full text-sm font-medium flex items-center justify-center p-2">{{ line.productVariant.price|number_format(2, ',', ' ')}} €</th>
+                            <th class="h-full w-full font-medium flex items-center justify-center p-2">
+                                <div class="grid grid-cols-3 items-center">
+                                    <form method="post" action="{{ path('app_products_remove_to_cart', {id: line.productVariant.id}) }}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <input type="hidden" name="redirect" value="{{ app.request.uri }}">
+                                        <button class="text-black text-xs cursor-pointer">
+                                            {% if line.quantity > 1 %}
+                                                <i class="fa-solid fa-minus"></i>
+                                            {% else %}
+                                                <i class="fa-solid fa-trash"></i>
+                                            {% endif %}
+                                        </button>
+                                    </form>
+                                    <p class="text-xs text-center font-semibold text-black px-2">{{ line.quantity }}</p>
+                                    <form method="post" action="{{ path('app_products_add_to_cart', {id: line.productVariant.id}) }}">
+                                        <input type="hidden" name="quantity" value="1">
+                                        <input type="hidden" name="redirect" value="{{ app.request.uri }}">
+                                        {% if line.quantity < line.productVariant.stock %}
+                                            <button class="text-black text-xs cursor-pointer">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                        {% else %}
+                                            <p class="text-xs text-center">MAX</p>
+                                        {% endif %}
+                                    </form>
+                                </div>
+                            </th>
+                            <th class="h-full w-full text-md font-boldbold flex items-center justify-center p-2">{{ line.subtotal|number_format(2, ',', ' ')}} €</th>
+                        </tr>
+                    {% endfor %}
+                    <tr class="text-black grid grid-cols-7 items-center rounded-b-2xl">
+                        <th class="col-start-6 col-end-8 h-full w-full text-blue-700 font-bold text-xl flex items-center justify-center p-2">Total : {{ cart.total|number_format(2, ',', ' ') }} €</th>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+        <div class="flex justify-between items-center w-full max-w-4xl mx-auto">
+            <a href="{{ path('app_user_delete_cart') }}" class="text-red-700 text-sm font-medium hover:underline"><i class="fa-solid fa-trash"></i> Vider le panier</a>
+            <a href="{{ path('app_user_delivery') }}" class="bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white text-lg font-semibold rounded-3xl p-2 m-2">Valider le panier <i class="fa-solid fa-circle-arrow-right"></i></a>
+        </div>
+        {% else %}
+        <img src="{{ asset('uploads/cart-empty.png') }}" alt="Panier vide" class="mx-auto w-lg bg-white rounded-3xl shadow-lg shadow-blue-700 p-5">
+        <a href="{{ path('app_products_all') }}" class="bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white font-semibold rounded-3xl px-3 py-2 text-center text-sm my-10">Accéder à la boutique <i class="fa-solid fa-basket-shopping ml-2"></i></a>
+        {% endif %}
+        
+    </div>
+{% endblock %}

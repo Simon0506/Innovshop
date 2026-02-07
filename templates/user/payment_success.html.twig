@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commande validée{% endblock %}
+
+{% block body %}
+    <h1 class="font-bold text-center text-2xl my-10">Félicitations ! Votre commande n°{{ order.numero }} a été validée !</h1>
+    <div class="px-5 max-w-4xl mx-auto text-center bg-[#F7F7F7] rounded-3xl shadow-lg shadow-blue-700 py-10">
+        <img src="{{ asset('uploads/order_valid.jpg') }}" alt="Commande réussie" class="h-[200px] w-[200px] mx-auto mb-5 rounded-lg object-cover">
+        <p class="text-black mb-5">Merci pour votre achat. Un email de confirmation a été envoyé à <span class="font-semibold">{{ order.user.email }}</span>.</p>
+        <p class="text-black mb-5">Vous pouvez consulter l'historique de vos commandes dans votre espace personnel.</p>
+        <a href="{{ path('app_user_orders') }}" class="bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white text-lg font-semibold rounded-3xl p-2 m-2">Voir mes commandes</a>
+    </div>
+    <div class="flex justify-center items-center mt-10">
+        <a href="{{ path('app_home') }}" class="bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white text-sm font-semibold rounded-3xl p-2 m-2"><i class="fa-solid fa-house"></i> Retour à l'accueil</a>
+    </div>
+    
+{% endblock %}

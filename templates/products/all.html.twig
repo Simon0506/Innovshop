@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tous les produits{% endblock %}
+
+{% block body %}
+    <section class="flex w-full gap-10">
+        <form method="get" action="{{ path('app_products_all') }}" data-controller="filters" data-action="change->filters#submit" class="bg-white h-full w-3xs shadow-md shadow-blue-700 rounded-br-3xl p-5">
+
+            <h2 class="font-semibold text-lg">Trier par prix :</h2>
+            <select name="sort" class="mt-2 p-2 border border-gray-300 rounded-2xl text-sm">
+                <option value="">-- Sélectionner --</option>
+                <option value="price_asc" {{ sort == 'price_asc' ? 'selected' }}>Du - cher au + cher</option>
+                <option value="price_desc" {{ sort == 'price_desc' ? 'selected' }}>Du + cher au - cher</option>
+                <option value="title_asc" {{ sort == 'title_asc' ? 'selected' }}>Titre A-Z</option>
+                <option value="title_desc" {{ sort == 'title_desc' ? 'selected' }}>Titre Z-A</option>
+            </select>
+
+            <h2 class="font-semibold text-lg mt-10">Filtrer par :</h2>
+            <ul class="flex flex-col gap-3 text-sm">
+                {% for group in optionGroups %}
+                    <li class="mt-2">
+                        <h3 class="font-medium text-md mb-2 text-blue-700">{{ group.name }}</h3>
+                        <ul class="flex flex-col gap-2 max-h-40 overflow-y-auto">
+                            {% for option in group.optionValues %}
+                                <li>
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" name="filters[{{ group.id }}][]" value="{{ option.id }}" class="rounded" {% if filters[group.id] is defined and option.id in filters[group.id] %}checked{% endif %}>
+                                    <span>{{ option.value }}</span>
+                                    </label>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+        </form>
+        
+        <div class="my-10 px-5 flex-1">
+            <h1 class="font-bold text-2xl text-center mb-10">
+                {% if query %}
+                    Résultats pour "{{ query }}"
+                {% else %}
+                    Tous les produits
+                {% endif %}
+            </h1>
+            <div class="flex flex-wrap items-center gap-10">
+            {% for row in products %}
+                {% set product = row[0] %}
+                <article class="rounded-3xl flex flex-col justify-between items-center bg-[#F7F7F7] border border-sky-500 hover:shadow-md hover:shadow-blue-700 w-3xs h-[300px] overflow-hidden">
+
+                    <div class="w-full overflow-hidden h-full">
+                        {% if product.images|length > 0 %}
+                            <img src="{{ asset('uploads/' ~ product.images|first) }}" alt="{{ product.title }}" class="object-cover w-full h-full">
+                        {% else %}
+                            <img src="{{ asset('uploads/no-photo.jpg') }}" alt="Image par défaut" class="object-cover w-full h-full">
+                        {% endif %}
+                    </div>
+                    <div class="flex flex-col w-full bg-[#F7F7F7] border-t border-sky-500">
+                        <h3 class="w-full px-5 text-black text-sm font-semibold text-center py-2">
+                            {{ product.title }}
+                        </h3>
+                        <div class="flex justify-between items-center gap-2 pb-3 px-5 w-full h-[60px]">
+                            <p class="{% if product.stock > 0 %}font-semibold text-md {% else %} text-red-700 text-xs font-normal{% endif %}">
+                                {% if product.stock > 0 %}
+                                    {% if product.productVariants|length > 1 %}
+                                        <span class="text-xs font-normal">A partir de </span><br>
+                                    {% endif %}
+                                    {{ product.price|number_format(2, ',', ' ') }} €
+                                {% else %}
+                                    Rupture de stock
+                                {% endif %}
+                            </p>
+                            <a href="{{ path('app_products_detail', {id: product.id, slug: product.slug }) }}"
+                            class="bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white font-semibold rounded-3xl px-3 py-2 text-sm text-center">
+                                Voir le produit
+                            </a>
+                        </div>
+                    </div>
+                </article> 
+            {% endfor %}               
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement{% endblock %}
+
+{% block body %}
+<div class="px-5 max-w-4xl mx-auto text-center">
+    <h1 class="text-2xl font-bold my-10">Paiement de votre commande</h1>
+
+    <div class="flex flex-col gap-3">
+        <div class="w-full mx-auto bg-[#F7F7F7] rounded-3xl shadow-lg shadow-blue-700 p-5 h-fit">
+            <h2 class="text-center text-blue-700 text-lg font-semibold mb-5">Récapitulatif du panier</h2>
+            <div class="flex flex-col gap-3">
+                {% for line in cart.orderLines %}
+                    <div class="flex justify-between items-center {% if line != cart.orderLines|first %} border-t border-sky-500{% endif %} pb-2">
+                        <div class="flex items-center gap-3">
+                            {% if line.productVariant.product.images|length > 0 %}
+                                <img src="{{ asset('uploads/' ~ line.productVariant.product.images|first) }}" alt="{{ line.productVariant.title }}" class="h-[50px] w-[50px] rounded-md object-cover">
+                            {% else %}
+                                <img src="{{ asset('uploads/no-photo.jpg') }}" alt="Image par défaut" class="h-[50px] w-[50px] rounded-md object-cover">
+                            {% endif %}
+                            <div class="flex flex-col items-start text-balck text-xs">
+                                <p class="font-semibold">{{ line.productVariant.title }}</p>
+                                <p>Quantité : {{ line.quantity }}</p>
+                                <p>Prix unitaire : {{ line.productVariant.price|number_format(2, ',', ' ') }} €</p>
+                            </div>
+                        </div>
+                        <p class="text-black text-sm font-semibold">Sous-total : {{ line.subtotal|number_format(2, ',', ' ') }} €</p>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="flex justify-between items-center mt-5 pt-2 border-t-2 border-blue-700">
+                <p class="font-bold text-black text-lg">Total :</p>
+                <p class="font-bold text-blue-700 text-lg">{{ cart.total|number_format(2, ',', ' ') }} €</p>
+            </div>
+        </div>
+        <div class="flex gap-5 w-full">
+            <div class="w-full mx-auto bg-[#F7F7F7] rounded-3xl shadow-lg shadow-blue-700 p-5 h-fit">
+                <h2 class="text-center text-blue-700 text-lg font-semibold mb-5">Adresse de livraison</h2>
+                <div class="flex flex-col items-center text-sm font-semibold">
+                    <p>{{ cart.deliveryAddress.firstName }} {{ cart.deliveryAddress.name }}</p>
+                    <p>{{ cart.deliveryAddress.address }}</p>
+                    <p>{{ cart.deliveryAddress.postalCode }} {{ cart.deliveryAddress.city }}</p>
+                </div>
+            </div>
+            <div class="w-full mx-auto bg-[#F7F7F7] rounded-3xl shadow-lg shadow-blue-700 p-5 h-fit">
+                <h2 class="text-center text-blue-700 text-lg font-semibold mb-5">Adresse de facturation</h2>
+                <div class="flex flex-col items-center text-sm font-semibold">
+                    <p>{{ cart.billingAddress.firstName }} {{ cart.billingAddress.name }}</p>
+                    <p>{{ cart.billingAddress.address }}</p>
+                    <p>{{ cart.billingAddress.postalCode }} {{ cart.billingAddress.city }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-between items-center w-full mx-auto my-10">
+        <div class="flex flex-col items-start gap-3">
+            <a href="{{ path('app_user_delivery') }}" class="text-blue-700 hover:underline text-sm"><i class="fa-solid fa-circle-arrow-left"></i> Retour aux adresses</a>
+            <a href="{{ path('app_user_cart') }}" class="text-red-700 text-sm hover:underline"><i class="fa-solid fa-circle-xmark"></i> Annuler et revenir au panier</a>
+        </div>
+        <div data-controller="stripe" data-stripe-checkout-url-value="{{ path('app_user_create_checkout_session') }}">
+            <button type="button"  data-action="click->stripe#checkout"   class="bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white font-semibold rounded-3xl p-3 my-10 cursor-pointer">
+                Payer avec Stripe
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+
+    <style>
+        @page {
+            margin: 25mm 20mm;
+        }
+
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 12px;
+            color: #111;
+        }
+
+        header {
+            position: fixed;
+            top: -20mm;
+            left: 0;
+            right: 0;
+            text-align: right;
+        }
+
+        h1 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f3f4f6;
+            font-weight: bold;
+        }
+
+        .no-border td {
+            border: none;
+            padding: 0;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-2 {
+            margin-top: 10px;
+        }
+
+        .mt-4 {
+            margin-top: 20px;
+        }
+
+        .total {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        footer {
+            position: fixed;
+            bottom: -15mm;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <img src="{{ absolute_url(asset('uploads/icone.png')) }}" alt="InnovShop Logo" width="140" style="right: 0;"/>
+</header>
+
+<!-- ================= EN-TÊTE ================= -->
+<h1 class="text-center">Facture</h1>
+<table class="no-border">
+    <tr>
+        <td width="50%">
+            <strong>InnovShop</strong><br>
+            12 rue du Commerce<br>
+            75000 Paris<br>
+            France<br><br>
+
+            SIRET : 123 456 789<br>
+            TVA : FR123456789
+        </td>
+
+        <td width="50%" class="text-right">
+            <strong>Commande n°</strong> : {{ order.numero }}<br>
+            <strong>Date</strong> :
+            {{ order.date|format_date('long', locale='fr') }}<br>
+            <strong>Client</strong> : {{ order.user.firstName }} {{ order.user.name }}
+        </td>
+    </tr>
+</table>
+
+<!-- ================= ADRESSES ================= -->
+
+<table class="mt-4">
+    <tr>
+        <td width="50%">
+            <strong>Adresse de facturation</strong><br><br>
+
+            {{ order.billingAddress.firstName}} {{ order.billingAddress.name}} <br>
+            {{ order.billingAddress.address }}<br>
+            {{ order.billingAddress.postalCode }}
+            {{ order.billingAddress.city }}
+        </td>
+
+        <td width="50%">
+            <strong>Adresse de livraison</strong><br><br>
+
+                {{ order.deliveryAddress.firstName}} {{ order.deliveryAddress.name}} <br>
+                {{ order.deliveryAddress.address }}<br>
+                {{ order.deliveryAddress.postalCode }}
+                {{ order.deliveryAddress.city }}
+        </td>
+    </tr>
+</table>
+
+<!-- ================= PRODUITS ================= -->
+
+<table class="mt-4">
+    <thead>
+        <tr>
+            <th>Produit</th>
+            <th>Quantité</th>
+            <th>Prix unitaire HT</th>
+            <th>TVA (%)</th>
+            <th>Montant de la TVA</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for item in order.orderLines %}
+            <tr>
+                <td>{{ item.productVariant.title }}</td>
+                <td class="text-center">{{ item.quantity }}</td>
+                <td class="text-right">
+                    {{ item.puht|format_currency('EUR', locale='fr') }}
+                </td>
+                <td class="text-right">{{ item.tva }}</td>
+                <td class="text-right">{{ item.tvaAmount|format_currency('EUR', locale='fr') }}</td>
+                <td class="text-right">
+                    {{ item.subtotal|format_currency('EUR', locale='fr') }}
+                </td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="5" class="text-right">TOTAL HT</td>
+            <td class="text-right">
+                {{ order.totalHT|format_currency('EUR', locale='fr') }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="5" class="text-right">TOTAL TVA</td>
+            <td class="text-right">
+                {{ order.totalTVA|format_currency('EUR', locale='fr') }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="5" class="text-right total">TOTAL GÉNÉRAL</td>
+            <td class="text-right total">
+                {{ order.total|format_currency('EUR', locale='fr') }}
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+    Facture émise par InnovShop — Paiement comptant — Merci pour votre commande
+</footer>
+
+</body>
+</html>

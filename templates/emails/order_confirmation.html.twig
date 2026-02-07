@@ -1,0 +1,41 @@
+<h1>Confirmation de votre commande</h1>
+<p>Bonjour {{ order.user.firstName }},</p>
+<p>Nous vous remercions pour votre commande n°<strong>{{ order.numero }}</strong> passée le <strong>{{ order.date|format_date('long') }}</strong>. Votre commande a bien été enregistrée et est en cours de traitement.</p>
+<h2>Récapitulatif de votre commande :</h2>
+<table style="width: 100%; border-collapse: collapse; border: 1px solid #87CEEB;">
+    <thead>
+        <tr style="background: linear-gradient(to top, #0ea5e9, #1e40af); color: white; font-weight: bold; text-align: center;">
+            <th style="padding: 2px; text-align: left;">Produit</th>
+            <th style="padding: 2px; text-align: left;">Quantité</th>
+            <th style="padding: 2px; text-align: left;">Prix unitaire</th>
+            <th style="padding: 2px; text-align: left;">Sous-total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for line in order.orderLines %}
+            <tr style="color: #000000; {% if line != order.orderLines|first %} border-top: 1px solid #87CEEB;{% endif %}">
+                <td style="padding: 2px;">{{ line.productVariant.title }}</td>
+                <td style="padding: 2px;">{{ line.quantity }}</td>
+                <td style="padding: 2px;">{{ line.productVariant.price|number_format(2, ',', ' ') }} €</td>
+                <td style="padding: 2px;">{{ line.subtotal|number_format(2, ',', ' ') }} €</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<p style="font-weight: bold; margin-top: 10px;">Total de la commande : {{ order.total|number_format(2, ',', ' ') }} €</p>
+<h2>Adresse de livraison :</h2>
+<p style="margin: 0;">{{ order.deliveryAddress.firstName }} {{ order.deliveryAddress.name }}</p>
+<p style="margin: 0;">{{ order.deliveryAddress.address }}</p>
+<p style="margin: 0;">{{ order.deliveryAddress.postalCode }} {{ order.deliveryAddress.city }}</p>
+<h2>Adresse de facturation :</h2>
+<p style="margin: 0;">{{ order.billingAddress.firstName }} {{ order.billingAddress.name }}</p>
+<p style="margin: 0;">{{ order.billingAddress.address }}</p>
+<p style="margin: 0;">{{ order.billingAddress.postalCode }} {{ order.billingAddress.city }}</p>
+<p style="margin-top: 10px;">Vous trouverez en pièce jointe la facture correspondante à votre commande.</p>
+<p style="margin-top: 10px;">Nous vous informerons par email dès que votre commande sera expédiée.</p>
+<div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px; justify-content: center; align-items: center;">
+    <p>Pour consulter vos commandes, cliquez sur le bouton ci-dessous :</p>
+    <a href="{{ path('app_user_orders') }}" style="padding: 10px 20px; background: linear-gradient(to top, #0ea5e9, #1e40af); color: white; text-decoration: none; border-radius: 15px; font-weight: bold;">Mes commandes</a>
+</div>
+<p>Merci de votre confiance et à bientôt sur notre boutique en ligne !</p>
+<p>Cordialement,<br>L'équipe InnovShop</p>

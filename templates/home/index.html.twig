@@ -1,0 +1,136 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}InnovShop - Accueil{% endblock %}
+
+{% block body %}
+
+    <div class="mt-5 px-5">
+        <div class="max-w-6xl mx-auto rounded-3xl overflow-hidden relative">
+            <img src="{{ asset('uploads/fond-accueil-clair.png') }}" alt="Illustration InnovShop" class="rounded-3xl mx-auto my-10 w-full object-cover h-[500px]">
+            <div class="absolute top-0 z-1 grid grid-cols-3 justify-around gap-10 items-center w-full h-full py-10 text-center text-black p-5">
+                <div class="flex flex-col items-center">
+                    <h2 class="font-bold text-2xl mb-5">Top produits</h2>
+                    <div data-controller="carousel" data-carousel-delay-value="2000" data-action="mouseenter->carousel#stopAutoplay mouseleave->carousel#startAutoplay" class="relative h-[400px] my-auto overflow-hidden w-full rounded-3xl">
+                        <!-- Track -->
+                        <div data-carousel-target="track" class="flex transition-transform duration-500 ease-in-out w-full h-full">
+                            {% for product in uneProducts %}
+                                <article class="min-w-full group rounded-3xl bg-[#F7F7F7] text-black flex flex-col justify-between items-center hover:shadow-md hover:shadow-blue-700 h-[400px] gap-2 relative overflow-hidden">
+                                    <h3 class="absolute top-0 w-full px-5 bg-white text-black shadow-md shadow-blue-700 text-lg font-semibold text-center opacity-0 transition-all duration-300 ease-out group-hover:opacity-100 py-2">
+                                        {{ product.title }}
+                                    </h3>
+
+                                    <div class="w-full overflow-hidden h-full">
+                                        {% if product.images|length > 0 %}
+                                            <img src="{{ asset('uploads/' ~ product.images|first) }}" alt="{{ product.title }}" class="rounded-t-3xl object-cover w-full h-full">
+                                        {% else %}
+                                            <img src="{{ asset('uploads/no-photo.jpg') }}" alt="Image par défaut" class="rounded-t-3xl object-cover w-full h-full">
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="flex justify-between items-center gap-2 mb-3 px-5 w-full h-[60px]">
+                                        <p class="{% if product.stock > 0 %}font-semibold text-lg{% else %}text-red-700 text-sm font-normal{% endif %}">
+                                            {% if product.stock > 0 %}
+                                                {% if product.productVariants|length > 1 %}
+                                                    <span class="text-xs font-normal">A partir de </span><br>
+                                                {% endif %}
+                                                {{ product.price|number_format(2, ',', ' ') }} €
+                                            {% else %}
+                                                Rupture de stock
+                                            {% endif %}
+                                        </p>
+                                        <a href="{{ path('app_products_detail', {id: product.id, slug: product.slug }) }}"
+                                        class="bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white font-semibold rounded-3xl px-3 py-2 text-sm">
+                                            Voir le produit
+                                        </a>
+                                    </div>
+                                </article>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Boutons -->
+                        <button data-action="carousel#prev" class="absolute left-2 top-1/2 -translate-y-1/2 bg-linear-to-t from-sky-500 to-blue-700 text-white p-3 rounded-full hover:bg-black cursor-pointer">
+                            ‹
+                        </button>
+                        <button data-action="carousel#next" class="absolute right-2 top-1/2 -translate-y-1/2 bg-linear-to-t from-sky-500 to-blue-700 text-white p-3 rounded-full hover:bg-black cursor-pointer">
+                            ›
+                        </button>
+                    </div>
+                </div>
+                <div class="flex flex-col justify-between py-5 h-full gap-5">
+                    <h1 class="font-bold text-5xl text-center text-blue-700">InnovShop</h1>
+                    <p class="text-center font-semibold text-lg">Le site e-commerce au service de l'innovation technologique.</p>
+                    
+                </div>
+                <div class="flex flex-col items-center">
+                    <h2 class="font-bold text-2xl mb-5">Nouveautés</h2>
+                    <div data-controller="carousel" data-carousel-delay-value="2200" data-action="mouseenter->carousel#stopAutoplay mouseleave->carousel#startAutoplay" class="relative h-[400px] my-auto overflow-hidden w-full rounded-3xl">
+                        <!-- Track -->
+                        <div data-carousel-target="track" class="flex transition-transform duration-500 ease-in-out w-full h-full">
+                            {% for product in newProducts %}
+                                <article class="min-w-full group rounded-3xl bg-[#F7F7F7] text-black flex flex-col justify-between items-center hover:shadow-md hover:shadow-blue-700 h-[400px] gap-2 relative overflow-hidden">
+                                    <h3 class="absolute top-0 w-full px-5 bg-white text-black shadow-md shadow-blue-700 text-lg font-semibold text-center opacity-0 transition-all duration-300 ease-out group-hover:opacity-100 py-2">
+                                        {{ product.title }}
+                                    </h3>
+
+                                    <div class="w-full overflow-hidden h-full">
+                                        {% if product.images|length > 0 %}
+                                            <img src="{{ asset('uploads/' ~ product.images|first) }}" alt="{{ product.title }}" class="rounded-t-3xl object-cover w-full h-full">
+                                        {% else %}
+                                            <img src="{{ asset('uploads/no-photo.jpg') }}" alt="Image par défaut" class="rounded-t-3xl object-cover w-full h-full">
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="flex justify-between items-center gap-2 mb-3 px-5 w-full h-[60px]">
+                                        <p class="{% if product.stock > 0 %}font-semibold text-lg{% else %}text-red-700 text-sm font-normal{% endif %}">
+                                            {% if product.stock > 0 %}
+                                                {% if product.productVariants|length > 1 %}
+                                                    <span class="text-xs font-normal">A partir de </span><br>
+                                                {% endif %}
+                                                {{ product.price|number_format(2, ',', ' ') }} €
+                                            {% else %}
+                                                Rupture de stock
+                                            {% endif %}
+                                        </p>
+                                        <a href="{{ path('app_products_detail', {id: product.id, slug: product.slug }) }}"
+                                        class="bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white font-semibold rounded-3xl px-3 py-2 text-sm">
+                                            Voir le produit
+                                        </a>
+                                    </div>
+                                </article>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Boutons -->
+                        <button data-action="carousel#prev" class="absolute left-2 top-1/2 -translate-y-1/2 bg-linear-to-t from-sky-500 to-blue-700 text-white p-3 rounded-full hover:bg-black cursor-pointer">
+                            ‹
+                        </button>
+                        <button data-action="carousel#next" class="absolute right-2 top-1/2 -translate-y-1/2 bg-linear-to-t from-sky-500 to-blue-700 text-white p-3 rounded-full hover:bg-black cursor-pointer">
+                            ›
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-6xl mx-auto mb-10 text-center">
+            <div class="flex justify-between mb-10 gap-5 text-gray-500">
+                <div class="flex flex-col items-center border border-gray-300 p-3 rounded-2xl bg-[#F7F7F7] shadow-md shadow-blue-700">
+                    <span class="font-semibold text-blue-700">🚚 Livraison rapide</span>
+                    <span class="text-sm">Recevez vos commandes en un temps record.</span>
+                </div>
+                <div class="flex flex-col items-center border border-gray-300 p-3 rounded-2xl bg-[#F7F7F7] shadow-md shadow-blue-700">
+                    <span class="font-semibold text-blue-700">🔒 Paiement sécurisé</span>
+                    <span class="text-sm">Vos informations sont protégées à chaque étape.</span>
+                </div>
+                <div class="flex flex-col items-center border border-gray-300 p-3 rounded-2xl bg-[#F7F7F7] shadow-md shadow-blue-700">
+                    <span class="font-semibold text-blue-700">💡 Produits innovants</span>
+                    <span class="text-sm">Découvrez les dernières technologies du marché.</span>
+                </div>
+                <div class="flex flex-col items-center border border-gray-300 p-3 rounded-2xl bg-[#F7F7F7] shadow-md shadow-blue-700">
+                    <span class="font-semibold text-blue-700">🤝 Service client</span>
+                    <span class="text-sm">Nous sommes là pour vous aider à chaque étape.</span>
+                </div>
+            </div>
+            <a href="{{ path('app_products_all') }}" class="bg-linear-to-r from-blue-700 to-sky-500 hover:shadow-md hover:shadow-black text-white font-semibold rounded-3xl px-5 py-3 text-lg mx-auto">Voir tous les produits</a>
+        </div>
+    </div>
+{% endblock %}

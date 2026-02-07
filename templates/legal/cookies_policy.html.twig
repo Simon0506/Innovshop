@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Politique des cookies{% endblock %}
+
+{% block body %}
+<section class="max-w-4xl mx-auto my-10 px-5 py-10 text-sm flex flex-col gap-4 bg-[#F7F7F7] rounded-3xl shadow-lg shadow-blue-700 border border-sky-500">
+    <h1 class="text-center text-2xl font-bold mb-5">Politique des cookies</h1>
+
+    <p>
+        Ce site utilise uniquement des cookies strictement nécessaires à son bon fonctionnement.
+    </p>
+
+    <h2 class="text-lg font-semibold mt-4">Cookies utilisés</h2>
+    <ul class="list-disc ml-5">
+        <li>Cookies de session (connexion, panier)</li>
+        <li>Cookies de sécurité</li>
+    </ul>
+
+    <p>
+        Aucun cookie de mesure d’audience, publicitaire ou de suivi n’est utilisé.
+    </p>
+
+    <h2 class="text-lg font-semibold mt-4">Gestion des cookies</h2>
+    <p>
+        Vous pouvez configurer votre navigateur pour bloquer les cookies. Toutefois, certaines
+        fonctionnalités du site pourraient ne plus fonctionner correctement.
+    </p>
+</section>
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}S'inscrire{% endblock %}
+
+{% block body %}
+    {% for flash_error in app.flashes('verify_email_error') %}
+        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+    {% endfor %}
+
+    <h1 class="font-bold text-center text-2xl mt-10">S'inscrire</h1>
+
+    {{ form_errors(registrationForm) }}
+
+    <div class="flex flex-col my-10 mx-auto max-w-md rounded-2xl shadow-md shadow-blue-700 items-center space-y-4 font-semibold bg-[#F7F7F7]">
+        <div class="grid grid-cols-2 gap-5 w-full items-center  rounded-t-2xl">
+            <a href="{{ path('app_login')}}"><h2 class="bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white text-xl text-center p-3 rounded-tl-2xl rounded-br-2xl">Se connecter</h2></a>
+            <h2 class="text-xl text-center p-3 rounded-tr-2xl">S'inscrire</h2>
+        </div>
+
+        {{ form_start(registrationForm) }}
+
+        <div class="grid grid-cols-3 gap-5 items-center mx-5">
+            {{ form_label(registrationForm.name, 'Nom*') }}
+            {{ form_widget(registrationForm.name, {
+                'attr': {
+                    'class': 'col-span-2 mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2'
+                }
+            }) }}
+            {{ form_errors(registrationForm.name) }}
+
+            {{ form_label(registrationForm.firstName, 'Prénom*') }}
+            {{ form_widget(registrationForm.firstName, {
+                'attr': {
+                    'class': 'col-span-2 mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2'
+                }
+            }) }}
+            {{ form_errors(registrationForm.firstName) }}
+
+            {{ form_label(registrationForm.address, 'Adresse*') }}
+            {{ form_widget(registrationForm.address, {
+                'attr': {
+                    'class': 'col-span-2 mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2'
+                }
+            }) }}
+            {{ form_errors(registrationForm.address) }}
+
+            {{ form_label(registrationForm.postal_code, 'Code postal*') }}
+            {{ form_widget(registrationForm.postal_code, {
+                'attr': {
+                    'class': 'col-span-2 mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2'
+                }
+            }) }}
+            {{ form_errors(registrationForm.postal_code) }}
+
+            {{ form_label(registrationForm.city, 'Ville*') }}
+            {{ form_widget(registrationForm.city, {
+                'attr': {
+                    'class': 'col-span-2 mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2'
+                }
+            }) }}
+            {{ form_errors(registrationForm.city) }}
+
+            {{ form_label(registrationForm.phone, 'Téléphone') }}
+            {{ form_widget(registrationForm.phone, {
+                'attr': {
+                    'class': 'col-span-2 mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2'
+                }
+            }) }}
+            {{ form_errors(registrationForm.phone) }}
+
+            {{ form_label(registrationForm.email, 'Email*') }}
+            {{ form_widget(registrationForm.email, {
+                'attr': {
+                    'class': 'col-span-2 mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2'
+                }
+            }) }}
+            {{ form_errors(registrationForm.email) }}
+
+            {{ form_label(registrationForm.plainPassword, 'Mot de passe*') }}
+            {{ form_widget(registrationForm.plainPassword, {
+                'attr': {
+                    'class': 'col-span-2 mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2'
+                }
+            }) }}
+            {{ form_errors(registrationForm.plainPassword) }}
+
+            {{ form_label(registrationForm.agreeTerms, 'Accepter les CGU*') }}
+            <div class="items-left">
+                {{ form_widget(registrationForm.agreeTerms) }}
+            </div>
+
+            {{ form_errors(registrationForm.agreeTerms) }}
+
+        </div>
+
+        <input type="hidden" name="redirect" value="{{ app.request.uri }}">
+        <button type="submit" class="block bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white font-semibold rounded-3xl px-3 py-2 mx-auto text-sm cursor-pointer">S'inscrire</button>
+
+        <p class="text-xs m-3">* Champs obligatoires</p>
+
+        {{ form_end(registrationForm) }}
+
+    </div>
+{% endblock %}

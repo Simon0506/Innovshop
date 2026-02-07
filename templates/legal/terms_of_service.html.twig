@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conditions Générales de Vente{% endblock %}
+
+{% block body %}
+<section class="max-w-4xl mx-auto my-10 px-5 py-10 text-sm flex flex-col gap-4 bg-[#F7F7F7] rounded-3xl shadow-lg shadow-blue-700 border border-sky-500">
+    <h1 class="text-center text-2xl font-bold mb-5">Conditions Générales de Vente</h1>
+
+    <p>
+        Les présentes conditions générales de vente (CGV) régissent l’ensemble des ventes réalisées
+        sur le site <strong>Innovshop</strong>. En passant commande sur ce site, vous acceptez ces
+        conditions sans réserve.
+    </p>
+
+    <h2 class="text-lg font-semibold mt-4">1. Identification de l’éditeur</h2>
+    <p>
+        Nom du site : Innovshop<br>
+        Responsable : Société Innovshop<br>
+        Email : contact@innovshop.fr<br>
+        Adresse : 2 rue de l'Innovation, 75000 Paris, France<br>
+    </p>
+
+    <h2 class="text-lg font-semibold mt-4">2. Produits</h2>
+    <p>
+        Les produits proposés sur le site sont ceux décrits sur les pages produits. Les photographies
+        et descriptions sont données à titre indicatif et n’engagent pas le vendeur.
+    </p>
+
+    <h2 class="text-lg font-semibold mt-4">3. Prix</h2>
+    <p>
+        Les prix sont indiqués en euros, toutes taxes comprises (TTC). Les frais de livraison ne
+        sont pas inclus sauf indication contraire.
+    </p>
+
+    <h2 class="text-lg font-semibold mt-4">4. Commande</h2>
+    <p>
+        La commande est validée après confirmation du paiement. Vous recevrez un e-mail de confirmation
+        pour chaque commande passée.
+    </p>
+
+    <h2 class="text-lg font-semibold mt-4">5. Paiement</h2>
+    <p>
+        Le paiement est sécurisé et s’effectue via Stripe (paiement par carte bancaire uniquement).
+    </p>
+
+    <h2 class="text-lg font-semibold mt-4">6. Livraison</h2>
+    <p>
+        Les produits sont livrés à l’adresse indiquée lors de la commande. Les délais sont indicatifs
+        et peuvent varier selon la destination et les transporteurs.
+    </p>
+
+    <h2 class="text-lg font-semibold mt-4">7. Rétractation et retours</h2>
+    <p>
+        Conformément à la loi, vous disposez d’un délai de 14 jours pour exercer votre droit de
+        rétractation. Les frais de retour sont à la charge du client sauf défaut du produit.
+    </p>
+
+    <h2 class="text-lg font-semibold mt-4">8. Garantie</h2>
+    <p>
+        Les produits bénéficient de la garantie légale de conformité et des vices cachés selon la loi
+        en vigueur. Toute réclamation doit être adressée par email à contact@innovshop.fr.
+    </p>
+
+    <h2 class="text-lg font-semibold mt-4">9. Responsabilité</h2>
+    <p>
+        Le vendeur ne peut être tenu responsable des dommages indirects ou de l’utilisation inappropriée
+        des produits.
+    </p>
+
+    <h2 class="text-lg font-semibold mt-4">10. Litiges</h2>
+    <p>
+        Les présentes CGV sont soumises au droit français. En cas de litige, les tribunaux français
+        seront compétents.
+    </p>
+
+    <p class="mt-5 text-sm italic">
+        Dernière mise à jour : {{ "now"|date('d/m/Y') }}
+    </p>
+</section>
+{% endblock %}

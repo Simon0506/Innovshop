@@ -1,0 +1,336 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil{% endblock %}
+
+{% block body %}
+    <div class="px-5">
+        <h1 class="font-bold text-center text-2xl my-10">Mon profil</h1>
+        {% for flash_error in app.flashes('verify_email_error') %}
+            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+        {% endfor %}
+        <div data-controller="profile" class="flex flex-wrap justify-between gap-5 max-w-6xl mx-auto mb-10 bg-[#F7F7F7] rounded-3xl p-2 shadow-md shadow-blue-700 border border-sky-500">
+
+        {# ----------------------------- Informations personnelles -------------------------- #}
+            <div class="mx-auto">
+                <h2 class="text-center text-blue-700 font-semibold my-4">Informations personnelles</h2>
+                <div id="actual-profil" data-profile-target="actualProfil" class="flex flex-col w-lg mx-auto items-center py-4 gap-2 font-semibold text-sm">
+                    <p class="text-black">{{ user.firstName }} {{ user.name }}</p>
+                    <p class="text-black">{{ user.address }}, {{ user.postalCode }} {{ user.city }}</p>
+                    {% if user.phone %}
+                        <p class="text-black">Tél : {{ user.phone }}</p>
+                    {% endif %}
+                    <button id="edit-profil-button" data-action="click->profile#showEditProfil" class="block bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white rounded-3xl font-semibold px-3 py-2 text-sm cursor-pointer">
+                        Modifier mon profil
+                    </button>
+                </div>
+                <div id="update-profil" data-profile-target="updateProfil" class="hidden flex flex-col w-lg mx-auto shadow-lg shadow-blue-700 rounded-2xl items-center py-4 space-y-4 font-semibold mb-10 bg-[#F7F7F7]">
+                    {{ form_start(profilForm, {
+                        attr: {
+                            class: 'w-full'
+                        }
+                    }) }}
+                        <div class="grid grid-cols-2 gap-5 items-center mx-5">
+                            {{ form_label(profilForm.name, 'Nom*') }}
+                            {{ form_widget(profilForm.name, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2'
+                                }
+                            }) }}
+                            {{ form_errors(profilForm.name) }}
+
+                            {{ form_label(profilForm.firstName, 'Prénom*') }}
+                            {{ form_widget(profilForm.firstName, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2'
+                                }
+                            }) }}
+                            {{ form_errors(profilForm.firstName) }}
+
+                            {{ form_label(profilForm.address, 'Adresse*') }}
+                            {{ form_widget(profilForm.address, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2'
+                                }
+                            }) }}
+                            {{ form_errors(profilForm.address) }}
+
+                            {{ form_label(profilForm.postal_code, 'Code postal*') }}
+                            {{ form_widget(profilForm.postal_code, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2'
+                                }
+                            }) }}
+                            {{ form_errors(profilForm.postal_code) }}
+
+                            {{ form_label(profilForm.city, 'Ville*') }}
+                            {{ form_widget(profilForm.city, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2'
+                                }
+                            }) }}
+                            {{ form_errors(profilForm.city) }}
+
+                            {{ form_label(profilForm.phone, 'Téléphone') }}
+                            {{ form_widget(profilForm.phone, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2'
+                                }
+                            }) }}
+                            {{ form_errors(profilForm.phone) }}
+                        </div>
+                        <button class="block bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white font-semibold rounded-3xl px-3 py-2 mx-auto mt-5 text-sm cursor-pointer" type="submit">
+                            Mettre à jour mon profil
+                        </button>
+                        <p class="text-xs m-3">* Champs obligatoires</p>
+                    {{ form_end(profilForm) }}
+                    <button id="cancel-edit-profil-button" data-action="click->profile#cancelEditProfil" class="block bg-red-700 hover:opacity-70 text-white font-semibold rounded-3xl px-3 py-2 mx-auto mt-5 text-sm cursor-pointer">
+                        Annuler
+                    </button>
+                </div>
+            </div>
+
+            {# ----------------------------- Informations de connexion -------------------------- #}
+            <div class="mx-auto">
+                <h2 class="text-center text-blue-700 font-semibold my-4">Informations de connexion</h2>
+                <div class="flex flex-col w-lg mx-auto items-center py-4 gap-2 font-semibold text-sm">
+                    <div id="actual-password" data-profile-target="actualPassword" class="{% if not updatePasswordForm.vars.valid and updatePasswordForm.vars.submitted %}hidden{% else %}flex flex-col items-center justify-center w-full{% endif %}">
+                        <div class="flex justify-center gap-5 items-center mx-5 w-full px-5">
+                            <p>Email : </p>
+                            <p class="text-black px-2">{{ user.email }}</p>
+                        </div>
+                        <button id="edit-password-button" data-action="click->profile#showEditPassword" class="bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white rounded-3xl font-semibold px-3 py-2 text-sm cursor-pointer mx-auto mt-5">
+                            Modifier mon mot de passe
+                        </button>                
+                    </div>
+                    <div id="update-password" data-profile-target="updatePassword" class="{% if not updatePasswordForm.vars.valid and updatePasswordForm.vars.submitted %}block{% else %}hidden{% endif %} gap-5 items-center mx-auto w-full px-5">
+                        {{ form_start(updatePasswordForm, {
+                            attr: {
+                                class: 'w-full'
+                            }
+                        }) }}
+                        {{ form_errors(updatePasswordForm) }}
+                        <div class="grid grid-cols-2 gap-5 items-center mx-5">
+                            <p>Email : </p>
+                            <p class="text-black px-2">{{ user.email }}</p>
+
+                            {{ form_label(updatePasswordForm.currentPassword, 'Mot de passe actuel*') }}
+                            {{ form_widget(updatePasswordForm.currentPassword, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2'
+                                }
+                            }) }}
+                            <div class="col-span-2 text-red-700 text-sm mb-2">
+                                {{ form_errors(updatePasswordForm.currentPassword) }}
+                            </div>
+                            
+
+                            {{ form_label(updatePasswordForm.newPassword.first, 'Nouveau mot de passe*') }}
+                            {{ form_widget(updatePasswordForm.newPassword.first, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2'
+                                }
+                            }) }}
+
+                            {{ form_label(updatePasswordForm.newPassword.second, 'Confirmer le nouveau mot de passe*') }}
+                            {{ form_widget(updatePasswordForm.newPassword.second, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2'
+                                }
+                            }) }}
+
+                            {% if updatePasswordForm.newPassword.first.vars.errors|length > 0 %}
+                                <div class="col-span-2 text-red-700 text-sm mb-2">
+                                    {{ form_errors(updatePasswordForm.newPassword.first) }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <button class="block bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white font-semibold rounded-3xl px-3 py-2 mt-5 mx-auto text-sm cursor-pointer" type="submit">
+                            Mettre à jour mon mot de passe
+                        </button>
+                        <p class="text-xs m-3">* Champs obligatoires</p>
+                    {{ form_end(updatePasswordForm) }}
+                    <button id="cancel-edit-password-button" data-action="click->profile#cancelEditPassword" class="block bg-red-700 hover:opacity-70 text-white font-semibold rounded-3xl px-3 py-2 mx-auto mt-5 text-sm cursor-pointer">
+                        Annuler
+                    </button>
+                    </div>
+                </div>
+            </div>
+
+            {# ----------------------------- Répertoire d'adresses -------------------------- #}
+            <div class="mx-auto">
+                <h2 class="text-center text-blue-700 font-semibold my-4">Répertoire d'adresses</h2>
+                <div id="addresses-list" data-profile-target="addressesList" class="mx-auto w-full font-semibold mb-10">
+                    {% if addresses|length > 0 %}
+                    <table class="bg-[#F7F7F7] shadow-md shadow-blue-700 rounded-2xl">
+                        <thead class="rounded-t-2xl">
+                            <tr class="text-white text-center bg-linear-to-t from-sky-500 to-blue-700 rounded-t-2xl">
+                                <th class="p-2 text-sm rounded-tl-2xl">Nom complet</th>
+                                <th class="p-2 text-sm">Adresse</th>
+                                <th class="p-2 text-sm">Téléphone</th>
+                                <th class="p-2 text-sm">
+                                    <div class="flex flex-col items-center">
+                                        <span class="text-xs">Livraison (par défaut)</span>
+                                        <span><i class="fa-solid fa-truck-fast"></i></span>
+                                    </div>
+                                </th>
+                                <th class="p-2">
+                                    <div class="flex flex-col items-center">
+                                        <span class="text-xs">Facturation (par défaut)</span>
+                                        <span><i class="fa-solid fa-euro-sign"></i></span>
+                                    </div>
+                                </th>
+                                <th class="p-2 text-sm rounded-tr-2xl">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            {% for address in addresses %}
+                                {% if address.deliveryDefault %}
+                                    <tr class="border-t border-sky-500 text-center text-black py-5">
+                                        <td class="p-2">{{ address.firstName }} {{ address.name }}</td>
+                                        <td class="p-2">{{ address.address }}, {{ address.postalCode }} {{ address.city }}</td>
+                                        <td class="p-2">{{ address.phone }}</td>
+                                        <td class="p-2"><i class="fa-solid fa-check text-green-700"></i></td>
+                                        <td class="p-2">{% if address.billingDefault %}<i class="fa-solid fa-check text-green-700"></i>{% endif %}</td>
+                                        <td class="p-2 flex flex-col items-center justify-center">
+                                            <button type="button" class="hover:underline cursor-pointer" data-action="click->profile#editAddress" data-id="{{ address.id }}" data-name="{{ address.name }}" data-first-name="{{ address.firstName }}" data-address="{{ address.address }}" data-postal-code="{{ address.postalCode }}" data-city="{{ address.city }}" data-phone="{{ address.phone }}" data-delivery-default="{{ address.deliveryDefault ? 1 : 0 }}" data-billing-default="{{ address.billingDefault ? 1 : 0 }}">Modifier</button>
+                                            <a href="{{path('app_user_delete_address', {id: address.id})}}" class="text-red-700 hover:underline" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette adresse ?');">Supprimer</a>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                            {% for address in addresses %}
+                                {% if address.billingDefault and address.billingDefault != address.deliveryDefault %}
+                                    <tr class="border-t border-sky-500 text-center text-black py-5">
+                                        <td class="p-2">{{ address.firstName }} {{ address.name }}</td>
+                                        <td class="p-2">{{ address.address }}, {{ address.postalCode }} {{ address.city }}</td>
+                                        <td class="p-2">{{ address.phone }}</td>
+                                        <td class="p-2"></td>
+                                        <td class="p-2"><i class="fa-solid fa-check text-green-700"></i></td>
+                                        <td class="p-2 flex flex-col items-center justify-center">
+                                            <button type="button" class="hover:underline cursor-pointer" data-action="click->profile#editAddress" data-id="{{ address.id }}" data-name="{{ address.name }}" data-first-name="{{ address.firstName }}" data-address="{{ address.address }}" data-postal-code="{{ address.postalCode }}" data-city="{{ address.city }}" data-phone="{{ address.phone }}" data-delivery-default="{{ address.deliveryDefault ? 1 : 0 }}" data-billing-default="{{ address.billingDefault ? 1 : 0 }}">Modifier</button>
+                                            <a href="{{path('app_user_delete_address', {id: address.id})}}" class="text-red-700 hover:underline" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette adresse ?');">Supprimer</a>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                            {% for address in addresses %}
+                                {% if not address.billingDefault and not address.deliveryDefault %}
+                                    <tr class="border-t border-sky-500 text-center text-black py-5">
+                                        <td class="p-2">{{ address.firstName }} {{ address.name }}</td>
+                                        <td class="p-2">{{ address.address }}, {{ address.postalCode }} {{ address.city }}</td>
+                                        <td class="p-2">{{ address.phone }}</td>
+                                        <td class="p-2"></td>
+                                        <td class="p-2"></td>
+                                        <td class="p-2 flex flex-col items-center justify-center">
+                                            <button type="button" class="hover:underline cursor-pointer" data-action="click->profile#editAddress" data-id="{{ address.id }}" data-name="{{ address.name }}" data-first-name="{{ address.firstName }}" data-address="{{ address.address }}" data-postal-code="{{ address.postalCode }}" data-city="{{ address.city }}" data-phone="{{ address.phone }}" data-delivery-default="{{ address.deliveryDefault ? 1 : 0 }}" data-billing-default="{{ address.billingDefault ? 1 : 0 }}">Modifier</button>
+                                            <a href="{{path('app_user_delete_address', {id: address.id})}}" class="text-red-700 hover:underline" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette adresse ?');">Supprimer</a>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                        <p class="text-center text-black font-semibold">Vous n'avez pas encore ajouté d'adresse.</p>
+                    {% endif %}
+                <button id="address-add" data-action="click->profile#showAddAddress" class="block bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white font-semibold rounded-3xl px-3 py-2 mx-auto mt-5 text-sm cursor-pointer">
+                    Ajouter une adresse
+                </button>
+                </div>
+                <div id="address-add-form" data-profile-target="addAddressForm" class="hidden w-full max-w-lg mx-auto shadow-lg shadow-blue-700 rounded-2xl p-5 mb-10 font-semibold bg-[#F7F7F7]">
+                    {{ form_start(addressForm, {
+                        attr: {
+                            'data-profile-target': 'addressFormElement'
+                        }
+                    }) }}
+                        <div class="grid grid-cols-2 gap-5 items-center mx-5">
+                            {{ form_label(addressForm.name, 'Nom*') }}
+                            {{ form_widget(addressForm.name, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2',
+                                    'data-profile-target': 'addressName' 
+                                }
+                            }) }}
+                            {{ form_errors(addressForm.name) }}
+
+                            {{ form_label(addressForm.firstName, 'Prénom') }}
+                            {{ form_widget(addressForm.firstName, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2',
+                                    'data-profile-target': 'addressFirstName'
+                                }
+                            }) }}
+                            {{ form_errors(addressForm.firstName) }}
+
+                            {{ form_label(addressForm.address, 'Adresse*') }}
+                            {{ form_widget(addressForm.address, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2',
+                                    'data-profile-target': 'addressAddress'
+                                }
+                            }) }}
+                            {{ form_errors(addressForm.address) }}
+
+                            {{ form_label(addressForm.postalCode, 'Code postal*') }}
+                            {{ form_widget(addressForm.postalCode, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2',
+                                    'data-profile-target': 'addressPostalCode'
+                                }
+                            }) }}
+                            {{ form_errors(addressForm.postalCode) }}
+
+                            {{ form_label(addressForm.city, 'Ville*') }}
+                            {{ form_widget(addressForm.city, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2',
+                                    'data-profile-target': 'addressCity'
+                                }
+                            }) }}
+                            {{ form_errors(addressForm.city) }}
+
+                            {{ form_label(addressForm.phone, 'Téléphone') }}
+                            {{ form_widget(addressForm.phone, {
+                                attr: {
+                                    class: 'mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2',
+                                    'data-profile-target': 'addressPhone'
+                                }
+                            }) }}
+                            {{ form_errors(addressForm.phone) }}
+
+                            {{ form_label(addressForm.deliveryDefault, 'Définir comme adresse de livraison par défaut') }}
+                            <div class="flex items-left">
+                                {{ form_widget(addressForm.deliveryDefault, {
+                                    attr: {
+                                        class: 'mt-1',
+                                        'data-profile-target': 'addressDeliveryDefault'
+                                    }
+                                }) }}
+                            </div>
+                            {{ form_errors(addressForm.deliveryDefault) }}
+
+                            {{ form_label(addressForm.billingDefault, 'Définir comme adresse de facturation par défaut') }}
+                            <div class="flex items-left">
+                                {{ form_widget(addressForm.billingDefault, {
+                                    attr: {
+                                        class: 'mt-1',
+                                        'data-profile-target': 'addressBillingDefault'
+                                    }
+                                }) }}
+                            </div>
+                            {{ form_errors(addressForm.billingDefault) }}
+                            <input type="hidden" name="address_id" data-profile-target="addressId">
+                        </div>
+                        <button data-profile-target="addressSubmit" class="block bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white font-semibold rounded-3xl px-3 py-2 mx-auto mt-5 text-sm cursor-pointer" type="submit">
+                            Ajouter cette adresse
+                        </button>
+                        <p class="text-xs m-3">* Champs obligatoires</p>
+                    {{ form_end(addressForm) }}
+                    <button id="cancel-add-address" data-action="click->profile#cancelAddAddress" class="block bg-red-700 hover:opacity-70 text-white font-semibold rounded-3xl px-3 py-2 mx-auto mt-5 text-sm cursor-pointer">
+                        Annuler
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Commande n°{{ order.numero }}{% endblock %}
+
+{% block body %}
+<section class="mx-auto px-5 max-w-4xl">
+    <h1 class="font-bold text-center text-2xl my-10">Commande n°{{ order.numero }} du {{ order.date|format_date('long') }}</h1>
+    <div class="mx-auto p-5 bg-[#F7F7F7] rounded-3xl shadow-lg shadow-blue-700 border border-sky-500 mb-10 flex flex-col gap-3">
+        <div class="grid grid-cols-4 items-start">
+            <div data-controller="review" class="col-span-3 flex flex-col gap-5">
+                <div class="flex items-center gap-2">
+                    <p>Statut de la commande :</p>
+                    {% if order.status == statusPaid %}
+                        <p class="text-blue-700 p-2">{{ order.status }} <i class="fa-solid fa-check"></i></p>
+                    {% elseif order.status == statusDelivered %}
+                        <p class="text-green-700 p-2">{{ order.status }} <i class="fa-solid fa-truck"></i></p>
+                    {% endif %}
+                </div>
+                <div class="flex gap-10">
+                    <div class="flex flex-col">
+                        <p class="font-semibold">Adresse de livraison :</p>
+                        <p class="text-sm">{{ order.deliveryAddress.firstName }} {{ order.deliveryAddress.name }} </p>
+                        <p class="text-sm">{{ order.deliveryAddress.address }}</p>
+                        <p class="text-sm">{{ order.deliveryAddress.postalCode }} {{ order.deliveryAddress.city }}</p>
+                    </div>
+                    <div class="flex flex-col">
+                        <p class="font-semibold">Adresse de facturation :</p>
+                        <p class="text-sm">{{ order.billingAddress.firstName }} {{ order.billingAddress.name }} </p>
+                        <p class="text-sm">{{ order.billingAddress.address }}</p>
+                        <p class="text-sm">{{ order.billingAddress.postalCode }} {{ order.billingAddress.city }}</p>
+                    </div>
+                </div>
+                    
+                {% if order.productsNumber > 1 %}
+                <p class="font-bold">Produits commandés ({{ order.productsNumber }} articles) :</p>
+                {% else %}
+                <p class="font-bold">Produit commandé ({{ order.productsNumber }} article) :</p>
+                {% endif %}
+                {% for group in groups %}
+                    <div class="{% if group != groups|first %}border-t border-sky-500 pt-3{% endif %} flex flex-col gap-3">
+                        <div class="flex items-center gap-5 w-full">
+                            {% if (group.product.images|length > 0)%}
+                                <img src="{{ asset('uploads/' ~ group.product.images|first) }}" alt="{{ group.product.title }}" class="w-[80px] h-[80px] rounded-2xl overflow-hidden border border-sky-500 object-cover">
+                            {% else %}
+                                <img src="{{ asset('uploads/no-photo.jpg') }}" alt="Image par défaut" class="w-[80px] h-[80px] rounded-2xl overflow-hidden border border-sky-500 object-cover">
+                            {% endif %}
+                            <div class="flex flex-col flex-1 gap-2 px-5">
+                                {% if group.orderLines|length > 1 %}
+                                    <p class="font-semibold underline underline-offset-4">{{ group.product.title }} ({{ group.orderLines|length }} variantes)</p>
+                                {% else %}
+                                    <p class="font-semibold underline underline-offset-4">{{ group.product.title }}</p>
+                                {% endif %}
+                                {% for line in group.orderLines %}
+                                    <div class="flex justify-between items-center w-full {% if line != group.orderLines|first %}border-t border-dotted border-sky-500 pt-2{% endif %}">
+                                        <div class="text-xs">
+                                            <p class="font-semibold">{{ line.productVariant.name }}</p>
+                                            <p>Quantité : {{ line.quantity }}</p>
+                                            <p>Prix unitaire : {{ line.productVariant.price|number_format(2, ',', ' ') }} €</p>
+                                        </div>
+                                        <p class="font-semibold text-sm">{{ line.subtotal|number_format(2, ',', ' ') }} €</p>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-start gap-2">
+                            {% set existingReview = reviews[group.product.id] ?? null %}
+
+                            {% if existingReview and existingReview.note is not null %}
+                                <p class="font-semibold text-sm">Vous avez laissé un avis le {{ existingReview.date|format_date('long') }} :</p>
+                                <div class="flex flex-col gap-2 ml-3">
+                                    <p class="text-sm italic">
+                                        Note :
+                                        {% for i in 1..5 %}
+                                            <span class="{{ i <= existingReview.note ? 'text-yellow-400' : 'text-gray-300' }}">★</span>
+                                        {% endfor %}
+                                    </p>
+                                    <p class="text-sm italic">{{ existingReview.comment }}</p>
+                                </div>
+                            {% endif %}
+                            <button data-action="click->review#showReviewForm" data-review-product-title-value="{{ group.product.title }}" data-review-product-id-value="{{ group.product.id }}" data-review-note-value="{{ existingReview.note ?? 0 }}" data-review-comment-value="{{ existingReview.comment ?? null }}" class="flex py-2 px-5 text-xs rounded-2xl text-white bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black cursor-pointer">
+                                {% if existingReview and existingReview.note is not null %}
+                                    Modifier mon avis
+                                {% else %}
+                                    Laisser un avis
+                                {% endif %}
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+                <p class="text-lg font-bold">TOTAL : {{ order.total|number_format(2, ',', ' ')}} €</p>
+
+                {# ---------------Review Form---------------- #}
+                <div data-review-target="reviewForm" class="hidden mt-5 w-full border-t border-sky-500 pt-5">
+                    {{ form_start(reviewForm, {
+                        'attr': {'class': 'flex flex-col gap-3 items-start'}
+                    }) }}
+                    <div class="flex items-center gap-2">
+                        {{ form_label(reviewForm.product, 'Produit : ', {
+                            'label_attr': {
+                                'class': 'font-semibold',
+                                'data-review-target': 'productTitle'
+                                }
+                        }) }}
+                        {{ form_widget(reviewForm.product, {
+                            'attr': {'data-review-target': 'productId'}
+                        }) }}
+                    </div>
+                    <div data-controller="stars" class="flex items-center gap-1">
+                        <span class="text-sm mr-2 font-semibold">Votre note :</span>
+                        {% for i in 1..5 %}
+                            <button type="button" aria-label="Noter {{ i }} sur 5" data-action="click->stars#set" data-stars-index-param="{{ i }}" class="star text-2xl text-gray-300 hover:text-yellow-400 transition">
+                                <i class="fa-solid fa-star"></i>
+                            </button>
+                        {% endfor %}
+
+                        {{ form_widget(reviewForm.note, {
+                            'attr': {'data-review-target': 'note'}
+                        }) }}
+                    </div>
+                    <div class="flex flex-col gap-2 items-start text-sm w-full">
+                        {{ form_label(reviewForm.comment, 'Votre avis :', {
+                            'label_attr': {'class': 'font-semibold'}
+                        }) }}
+                        {{ form_widget(reviewForm.comment, {
+                            'attr': {
+                                'class': 'w-full h-24 p-2 border border-sky-500 rounded-lg',
+                                'data-review-target': 'comment'
+                                }
+                        }) }}
+                    </div>
+                    <button type="submit" class="py-2 px-5 text-xs rounded-2xl text-white bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black cursor-pointer">Valider</button>
+                    {{ form_end(reviewForm) }}
+                    <button data-action="click->review#hideReviewForm" class="mt-2 py-2 px-4 text-xs rounded-2xl text-white bg-red-700 hover:shadow-md hover:shadow-black cursor-pointer">Annuler</button>
+                </div>
+            </div>
+            <div class="p-2">
+                <div class="flex flex-col gap-5 items-center justify-center font-semibold text-sm w-fit">
+                    <a href="{{ path('app_invoice_pdf', {id: order.id})}}" target="_blank" class="py-2 px-5 text-center w-full rounded-2xl text-white bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black">Télécharger la facture</a>
+                    <form action="{{ path('app_user_order_repeat', {id: order.id}) }}" method="post" class="w-full">
+                        <button type="submit" class="py-2 px-5 text-center w-full rounded-2xl text-white bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black cursor-pointer">Acheter à nouveau</button>
+                    </form>
+                    {% if order.status == statusPaid %}
+                    <form action="{{ path('app_user_order_cancel', {id: order.id}) }}" method="post" data-controller="confirm" data-confirm-message-value="Êtes-vous sûr de vouloir annuler cette commande ?" class="w-full">
+                        <input type="hidden" name="_token" value="{{ csrf_token('cancel-order-' ~ order.id) }}">
+                        <button type="submit" data-action="confirm#submit" class="py-2 px-5 text-center w-full rounded-2xl text-white bg-red-700 hover:shadow-md hover:shadow-black cursor-pointer">Annuler la commande</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="flex justify-center mb-10">
+        <a href="{{ path('app_user_orders') }}" class="py-2 px-5 text-center text-sm rounded-2xl text-white bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black">Retour aux commandes</a>
+    </div>
+</section>
+{% endblock %}

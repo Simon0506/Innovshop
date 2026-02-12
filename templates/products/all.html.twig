@@ -6,13 +6,13 @@
     <section class="flex w-full gap-10">
         <form method="get" action="{{ path('app_products_all') }}" data-controller="filters" data-action="change->filters#submit" class="bg-white h-full w-3xs shadow-md shadow-blue-700 rounded-br-3xl p-5">
 
-            <h2 class="font-semibold text-lg">Trier par prix :</h2>
+            <h2 class="font-semibold text-lg">Trier par :</h2>
             <select name="sort" class="mt-2 p-2 border border-gray-300 rounded-2xl text-sm">
                 <option value="">-- Sélectionner --</option>
-                <option value="price_asc" {{ sort == 'price_asc' ? 'selected' }}>Du - cher au + cher</option>
-                <option value="price_desc" {{ sort == 'price_desc' ? 'selected' }}>Du + cher au - cher</option>
-                <option value="title_asc" {{ sort == 'title_asc' ? 'selected' }}>Titre A-Z</option>
-                <option value="title_desc" {{ sort == 'title_desc' ? 'selected' }}>Titre Z-A</option>
+                <option value="price_asc" {{ sort == 'price_asc' ? 'selected' }}>Prix : du - cher au + cher</option>
+                <option value="price_desc" {{ sort == 'price_desc' ? 'selected' }}>Prix : du + cher au - cher</option>
+                <option value="title_asc" {{ sort == 'title_asc' ? 'selected' }}>Titre : de A à Z</option>
+                <option value="title_desc" {{ sort == 'title_desc' ? 'selected' }}>Titre : de Z à A</option>
             </select>
 
             <h2 class="font-semibold text-lg mt-10">Filtrer par :</h2>

@@ -99,6 +99,9 @@ class ProductVariant
 
         $productTitle = $this->getProduct() ? $this->getProduct()->getTitle() : '';
 
+        if (empty($optionName)) {
+            return $productTitle;
+        }
         return implode(' - ', [$productTitle, $optionName]);
     }
 

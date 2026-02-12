@@ -6,10 +6,8 @@ export default class extends Controller {
     }
 
     submit(event) {
-        event.preventDefault();
-
-        if (confirm(this.messageValue)) {
-            this.element.submit();
+        if (!confirm(this.messageValue)) {
+            event.preventDefault();
         }
     }
 }

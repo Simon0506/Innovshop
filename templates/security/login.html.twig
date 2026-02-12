@@ -23,7 +23,7 @@
             <div class="grid grid-cols-3 gap-5 items-center mx-5">
                 <label for="username">Email</label>
                 <input type="email" value="{{ last_username }}" name="_username" id="username" class="col-span-2 mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2" autocomplete="email" required autofocus>
-                <label for="password">Password</label>
+                <label for="password">Mot de passe</label>
                 <input type="password" name="_password" id="password" class="col-span-2 mt-1 block w-full bg-white border border-blue-700 rounded-md text-black px-2" autocomplete="current-password" required>
                 <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
             </div>
@@ -35,6 +35,7 @@
             <button class="bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white font-semibold rounded-3xl px-3 py-2 text-sm cursor-pointer" type="submit">
                 Connexion
             </button>
+            <a href="{{ path('app_forgot_password_request') }}" class="text-sm text-blue-700 hover:underline">Mot de passe oublié ?</a>
         </div>
     </form>
 {% endblock %}

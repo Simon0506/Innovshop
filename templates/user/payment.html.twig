@@ -11,7 +11,7 @@
             <h2 class="text-center text-blue-700 text-lg font-semibold mb-5">Récapitulatif du panier</h2>
             <div class="flex flex-col gap-3">
                 {% for line in cart.orderLines %}
-                    <div class="flex justify-between items-center {% if line != cart.orderLines|first %} border-t border-sky-500{% endif %} pb-2">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center {% if line != cart.orderLines|first %} border-t border-sky-500{% endif %} pb-2 gap-2">
                         <div class="flex items-center gap-3">
                             {% if line.productVariant.product.images|length > 0 %}
                                 <img src="{{ asset('uploads/' ~ line.productVariant.product.images|first) }}" alt="{{ line.productVariant.title }}" class="h-[50px] w-[50px] rounded-md object-cover">
@@ -33,7 +33,7 @@
                 <p class="font-bold text-blue-700 text-lg">{{ cart.total|number_format(2, ',', ' ') }} €</p>
             </div>
         </div>
-        <div class="flex gap-5 w-full">
+        <div class="flex flex-col md:flex-row gap-5 w-full">
             <div class="w-full mx-auto bg-[#F7F7F7] rounded-3xl shadow-lg shadow-blue-700 p-5 h-fit">
                 <h2 class="text-center text-blue-700 text-lg font-semibold mb-5">Adresse de livraison</h2>
                 <div class="flex flex-col items-center text-sm font-semibold">
@@ -52,7 +52,7 @@
             </div>
         </div>
     </div>
-    <div class="flex justify-between items-center w-full mx-auto my-10">
+    <div class="flex justify-between items-center w-full mx-auto my-5 md:my-10">
         <div class="flex flex-col items-start gap-3">
             <a href="{{ path('app_user_delivery') }}" class="text-blue-700 hover:underline text-sm"><i class="fa-solid fa-circle-arrow-left"></i> Retour aux adresses</a>
             <a href="{{ path('app_user_cart') }}" class="text-red-700 text-sm hover:underline"><i class="fa-solid fa-circle-xmark"></i> Annuler et revenir au panier</a>

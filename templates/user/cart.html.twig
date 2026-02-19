@@ -6,32 +6,32 @@
     <h1 class="font-bold text-center text-2xl my-10">Mon panier</h1>
     <div class="px-5 items-center flex flex-col">
         {% if cart and cart.orderLines|length > 0 %}
-        <div class="w-full max-w-4xl mx-auto shadow-lg shadow-blue-700 text-sm rounded-2xl mb-10 bg-[#F7F7F7]">
+        <div class="w-full max-w-4xl mx-auto shadow-lg shadow-blue-700 text-xs md:text-sm rounded-2xl mb-5 md:mb-10 bg-[#F7F7F7]">
             <table class="border-collapse w-full">
                 <thead>
-                    <tr class="bg-linear-to-t from-sky-500 to-blue-700 text-white font-semibold rounded-t-2xl grid grid-cols-7 items-center">
-                        <th class="h-full w-full flex items-center justify-center col-span-4 p-2">Désignation du produit</th>
-                        <th class="h-full w-full flex items-center justify-center p-2">Prix unitaire</th>
-                        <th class="h-full w-full flex items-center justify-center p-2">Quantité</th>
-                        <th class="h-full w-full flex items-center justify-center p-2">Sous-total TTC</th>
+                    <tr class="bg-linear-to-t from-sky-500 to-blue-700 text-white font-semibold rounded-t-2xl grid grid-cols-6 md:grid-cols-7 items-center">
+                        <th class="h-full w-full flex items-center justify-center col-span-3 md:col-span-4 p-1">Désignation du produit</th>
+                        <th class="h-full w-full flex items-center justify-center p-1">Prix unitaire</th>
+                        <th class="h-full w-full flex items-center justify-center p-1">Quantité</th>
+                        <th class="h-full w-full flex items-center justify-center p-1">Sous-total TTC</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for line in cart.orderLines %}
-                        <tr class="text-black grid grid-cols-7 items-center">
-                            <th class="h-full w-full flex items-center gap-2 col-span-4 p-2">
+                        <tr class="text-black grid grid-cols-6 md:grid-cols-7 items-center">
+                            <th class="h-full w-full flex items-center gap-2 col-span-3 md:col-span-4 p-1">
                                 {% if (line.productVariant.product.images|length > 0)%}
                                     <img src="{{ asset('uploads/' ~ line.productVariant.product.images|first) }}" alt="{{ line.productVariant.title }}" class="h-[50px] w-[50px] rounded-md object-cover">
                                 {% else %}
                                     <img src="{{ asset('uploads/no-photo.jpg') }}" alt="Image par défaut" class="h-[50px] w-[50px] rounded-md object-cover">
                                 {% endif %}
-                                <p class="text-sm font-medium"><a href="{{ path('app_products_detail', {id: line.productVariant.id, slug: line.productVariant.slug }) }}">{{ line.productVariant.title }}</a></p>
+                                <p class="text-xs md:text-sm font-medium"><a href="{{ path('app_products_detail', {id: line.productVariant.id, slug: line.productVariant.slug }) }}">{{ line.productVariant.title }}</a></p>
                                 {% if line.productVariant.stock < 10 %}
                                     <p class="text-red-800 text-xs"><i class="fa-solid fa-triangle-exclamation"></i> Il ne reste plus que {{ line.productVariant.stock }} exemplaire{% if line.productVariant.stock > 1 %}s{% endif %}</p>
                                 {% endif %}
                             </th>
-                            <th class="h-full w-full text-sm font-medium flex items-center justify-center p-2">{{ line.productVariant.price|number_format(2, ',', ' ')}} €</th>
-                            <th class="h-full w-full font-medium flex items-center justify-center p-2">
+                            <th class="h-full w-full text-xs md:text-sm font-medium flex items-center justify-center p-1">{{ line.productVariant.price|number_format(2, ',', ' ')}} €</th>
+                            <th class="h-full w-full font-medium flex items-center justify-center p-1">
                                 <div class="grid grid-cols-3 items-center">
                                     <form method="post" action="{{ path('app_products_remove_to_cart', {id: line.productVariant.id}) }}">
                                         <input type="hidden" name="quantity" value="1">
@@ -58,30 +58,30 @@
                                     </form>
                                 </div>
                             </th>
-                            <th class="h-full w-full text-md font-boldbold flex items-center justify-center p-2">{{ line.subtotal|number_format(2, ',', ' ')}} €</th>
+                            <th class="h-full w-full text-xs md:text-md font-boldbold flex items-center justify-center p-1">{{ line.subtotal|number_format(2, ',', ' ')}} €</th>
                         </tr>
                     {% endfor %}
-                    <tr class="text-black grid grid-cols-7 items-center rounded-b-2xl">
-                        <th class="col-start-6 col-end-8 h-full w-full text-blue-700 font-bold text-xl flex items-center justify-center p-2">Total : {{ cart.total|number_format(2, ',', ' ') }} €</th>
+                    <tr class="text-black grid grid-cols-6 md:grid-cols-7 items-center rounded-b-2xl">
+                        <th class="col-start-5 col-end-7 md:col-start-6 md:col-end-8 h-full w-full text-blue-700 font-bold text-md md:text-xl flex items-center justify-center p-2">Total : {{ cart.total|number_format(2, ',', ' ') }} €</th>
                     </tr>
                     
                 </tbody>
             </table>
         </div>
         <div class="flex justify-between items-center w-full max-w-4xl mx-auto">
-            <div data-controller="delete-cart">
-                <p class="text-red-700 text-sm font-medium hover:underline cursor-pointer" data-action="click->delete-cart#showConfirm"><i class="fa-solid fa-trash"></i> Vider le panier</p>
-                <div data-delete-cart-target="confirm" class="hidden fixed inset-0 flex items-center justify-center z-50">
+            <div data-controller="delete-confirm">
+                <p class="text-red-700 text-xs md:text-sm font-medium hover:underline cursor-pointer" data-action="click->delete-confirm#showConfirm"><i class="fa-solid fa-trash"></i> Vider le panier</p>
+                <div data-delete-confirm-target="confirm" class="hidden fixed inset-0 flex items-center justify-center z-50">
                     <div class="bg-white rounded-lg p-5 shadow-lg shadow-blue-700">
                         <p class="text-black font-semibold mb-5">Êtes-vous sûr de vouloir vider votre panier ?</p>
                         <div class="flex justify-end gap-5">
-                            <button class="bg-gray-300 text-black font-semibold rounded-3xl px-3 py-2 cursor-pointer" data-action="click->delete-cart#hideConfirm">Annuler</button>
+                            <button class="bg-gray-300 text-black font-semibold rounded-3xl px-3 py-2 cursor-pointer" data-action="click->delete-confirm#hideConfirm">Annuler</button>
                             <a href="{{ path('app_user_delete_cart') }}" class="bg-red-700 text-white font-semibold rounded-3xl px-3 py-2">Vider le panier</a>
                         </div>
                     </div>
                 </div>
             </div>
-            <a href="{{ path('app_user_delivery') }}" class="bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white text-lg font-semibold rounded-3xl p-2 m-2">Valider le panier <i class="fa-solid fa-circle-arrow-right"></i></a>
+            <a href="{{ path('app_user_delivery') }}" class="bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white text-md md:text-lg font-semibold rounded-3xl p-2 m-2">Valider le panier <i class="fa-solid fa-circle-arrow-right"></i></a>
         </div>
         {% else %}
         <img src="{{ asset('uploads/cart-empty.png') }}" alt="Panier vide" class="mx-auto w-lg bg-white rounded-3xl shadow-lg shadow-blue-700 p-5">

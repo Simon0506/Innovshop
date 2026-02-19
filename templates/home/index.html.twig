@@ -5,17 +5,21 @@
 {% block body %}
 
     <div class="mt-5 px-5">
-        <div class="max-w-6xl mx-auto rounded-3xl overflow-hidden relative">
-            <img src="{{ asset('uploads/fond-accueil-clair.png') }}" alt="Illustration InnovShop" class="rounded-3xl mx-auto my-10 w-full object-cover h-[500px]">
-            <div class="absolute top-0 z-1 grid grid-cols-3 justify-around gap-10 items-center w-full h-full py-10 text-center text-black p-5">
+        <div class="max-w-6xl mx-auto rounded-3xl overflow-hidden relative md:max-h-[600px]">
+            <img src="{{ asset('uploads/fond-accueil-clair.png') }}" alt="Illustration InnovShop" class="rounded-3xl mx-auto my-10 w-full object-cover max-h-[200px] md:max-h-[500px]">
+            <div class="md:hidden absolute top-5 z-1 flex flex-col py-5 h-[500px] gap-10 w-full">
+                <h1 class="font-bold text-xl text-center text-blue-700">InnovShop</h1>
+                <p class="text-center font-semibold text-md mt-20">Le site e-commerce au service de l'innovation technologique.</p>
+            </div>
+            <div class="md:absolute md:top-0 md:z-1 md:grid md:grid-cols-3 flex flex-col justify-around gap-10 items-center w-full h-full py-2 md:py-10 text-center text-black px-5">
                 <div class="flex flex-col items-center">
-                    <h2 class="font-bold text-2xl mb-5">Top produits</h2>
-                    <div data-controller="carousel" data-carousel-delay-value="2000" data-action="mouseenter->carousel#stopAutoplay mouseleave->carousel#startAutoplay" class="relative h-[400px] my-auto overflow-hidden w-full rounded-3xl">
+                    <h2 class="font-bold text-lg md:text-2xl mb-5">Top produits</h2>
+                    <div data-controller="carousel" data-carousel-delay-value="2000" data-action="mouseenter->carousel#stopAutoplay mouseleave->carousel#startAutoplay" class="relative h-[300px] my-auto overflow-hidden w-xs md:w-full rounded-3xl border border-sky-500 mx-auto">
                         <!-- Track -->
                         <div data-carousel-target="track" class="flex transition-transform duration-500 ease-in-out w-full h-full">
                             {% for product in uneProducts %}
-                                <article class="min-w-full rounded-3xl bg-[#F7F7F7] text-black flex flex-col justify-between items-center hover:shadow-md hover:shadow-blue-700 h-[400px] gap-2 relative overflow-hidden">
-                                    <h3 class="absolute top-0 w-full px-5 bg-white text-black shadow-md shadow-blue-700 text-lg font-semibold text-center py-2">
+                                <article class="min-w-full rounded-3xl bg-[#F7F7F7] text-black flex flex-col justify-between items-center hover:shadow-md hover:shadow-blue-700 h-[300px] gap-2 relative overflow-hidden">
+                                    <h3 class="absolute top-0 w-full px-5 bg-white text-black shadow-md shadow-blue-700 md:text-lg font-semibold text-center py-2">
                                         {{ product.title }}
                                     </h3>
 
@@ -28,7 +32,7 @@
                                     </div>
 
                                     <div class="flex justify-between items-center gap-2 mb-3 px-5 w-full h-[60px]">
-                                        <p class="{% if product.stock > 0 %}font-semibold text-lg{% else %}text-red-700 text-sm font-normal{% endif %}">
+                                        <p class="{% if product.stock > 0 %}font-semibold text-sm md:text-lg{% else %}text-red-700 text-sm font-normal{% endif %}">
                                             {% if product.stock > 0 %}
                                                 {% if product.productVariants|length > 1 %}
                                                     <span class="text-xs font-normal">A partir de </span><br>
@@ -39,7 +43,7 @@
                                             {% endif %}
                                         </p>
                                         <a href="{{ path('app_products_detail', {id: product.id, slug: product.slug }) }}"
-                                        class="bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white font-semibold rounded-3xl px-3 py-2 text-sm">
+                                        class="bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white font-semibold rounded-3xl px-3 py-2 text-xs md:text-sm">
                                             Voir le produit
                                         </a>
                                     </div>
@@ -56,19 +60,20 @@
                         </button>
                     </div>
                 </div>
-                <div class="flex flex-col justify-between py-5 h-full gap-5">
+
+                <div class="hidden md:flex flex-col justify-between py-5 h-full gap-5">
                     <h1 class="font-bold text-5xl text-center text-blue-700">InnovShop</h1>
                     <p class="text-center font-semibold text-lg">Le site e-commerce au service de l'innovation technologique.</p>
-                    
                 </div>
+
                 <div class="flex flex-col items-center">
-                    <h2 class="font-bold text-2xl mb-5">Nouveautés</h2>
-                    <div data-controller="carousel" data-carousel-delay-value="2200" data-action="mouseenter->carousel#stopAutoplay mouseleave->carousel#startAutoplay" class="relative h-[400px] my-auto overflow-hidden w-full rounded-3xl">
+                    <h2 class="font-bold text-lg md:text-2xl mb-5">Nouveautés</h2>
+                    <div data-controller="carousel" data-carousel-delay-value="2200" data-action="mouseenter->carousel#stopAutoplay mouseleave->carousel#startAutoplay" class="relative h-[300px] my-auto overflow-hidden w-xs md:w-full rounded-3xl border border-sky-500 mx-auto">
                         <!-- Track -->
                         <div data-carousel-target="track" class="flex transition-transform duration-500 ease-in-out w-full h-full">
                             {% for product in newProducts %}
-                                <article class="min-w-full rounded-3xl bg-[#F7F7F7] text-black flex flex-col justify-between items-center hover:shadow-md hover:shadow-blue-700 h-[400px] gap-2 relative overflow-hidden">
-                                    <h3 class="absolute top-0 w-full px-5 bg-white text-black shadow-md shadow-blue-700 text-lg font-semibold text-center py-2">
+                                <article class="min-w-full rounded-3xl bg-[#F7F7F7] text-black flex flex-col justify-between items-center hover:shadow-md hover:shadow-blue-700 h-[300px] gap-2 relative overflow-hidden">
+                                    <h3 class="absolute top-0 w-full p-1 md:px-5 bg-white text-black shadow-md shadow-blue-700 md:text-lg font-semibold text-center md:py-2">
                                         {{ product.title }}
                                     </h3>
 
@@ -81,7 +86,7 @@
                                     </div>
 
                                     <div class="flex justify-between items-center gap-2 mb-3 px-5 w-full h-[60px]">
-                                        <p class="{% if product.stock > 0 %}font-semibold text-lg{% else %}text-red-700 text-sm font-normal{% endif %}">
+                                        <p class="{% if product.stock > 0 %}font-semibold text-sm md:text-lg{% else %}text-red-700 text-sm font-normal{% endif %}">
                                             {% if product.stock > 0 %}
                                                 {% if product.productVariants|length > 1 %}
                                                     <span class="text-xs font-normal">A partir de </span><br>
@@ -92,7 +97,7 @@
                                             {% endif %}
                                         </p>
                                         <a href="{{ path('app_products_detail', {id: product.id, slug: product.slug }) }}"
-                                        class="bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white font-semibold rounded-3xl px-3 py-2 text-sm">
+                                        class="bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white font-semibold rounded-3xl px-3 py-2 text-xs md:text-sm">
                                             Voir le produit
                                         </a>
                                     </div>
@@ -111,8 +116,8 @@
                 </div>
             </div>
         </div>
-        <div class="max-w-6xl mx-auto mb-10 text-center">
-            <div class="flex justify-between mb-10 gap-5 text-gray-500">
+        <div class="max-w-6xl mx-auto mb-10 text-center mt-10 md:mt-0">
+            <div class="flex flex-col md:flex-row justify-between mb-10 gap-5 text-gray-500">
                 <div class="flex flex-col items-center border border-gray-300 p-3 rounded-2xl bg-[#F7F7F7] shadow-md shadow-blue-700">
                     <span class="font-semibold text-blue-700">🚚 Livraison rapide</span>
                     <span class="text-sm">Recevez vos commandes en un temps record.</span>

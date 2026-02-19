@@ -13,9 +13,9 @@
         </div>
         <div class="mx-auto max-w-4xl bg-[#F7F7F7] rounded-3xl shadow-lg shadow-blue-700 border border-sky-500">
             <h1 class="font-bold text-2xl text-center py-5">{{ product.title }}</h1>
-            <div data-controller="product-options" data-product-options-base-price-value="{{ product.price }}" class="grid grid-cols-3 gap-5 p-5">
-                <div class="grid {% if pvs|length > 1 %}grid-rows-4 {% else %} grid-rows-3 {% endif %} col-span-2">
-                    <div data-controller="product-images" class="row-span-3 rounded-3xl overflow-hidden h-[400px] flex relative">
+            <div data-controller="product-options" data-product-options-base-price-value="{{ product.price }}" class="flex flex-col md:grid md:grid-cols-3 gap-5 p-5">
+                <div class="flex flex-col md:grid {% if pvs|length > 1 %}md:grid-rows-4 {% else %} md:grid-rows-3 {% endif %} md:col-span-2">
+                    <div data-controller="product-images" class="md:row-span-3 rounded-3xl overflow-hidden h-[400px] flex relative">
                         {% if product.images|length > 1 %}
                             <button data-action="product-images#prev" class="absolute left-2 top-1/2 -translate-y-1/2 bg-linear-to-t from-sky-500 to-blue-700 text-white p-3 rounded-full hover:bg-black cursor-pointer z-2">
                                 ‹
@@ -50,8 +50,8 @@
                     </fieldset>
                     {% endif %}
                 </div>
-                <div class="grid {% if pvs|length > 0 %}grid-rows-4 {% else %} grid-rows-3 {% endif %}">
-                    <div class="row-span-3 flex flex-col justify-center items-center mx-auto gap-10">
+                <div class="flex flex-col md:grid {% if pvs|length > 0 %}md:grid-rows-4 {% else %} md:grid-rows-3 {% endif %}">
+                    <div class="md:row-span-3 flex flex-col justify-center items-center mx-auto gap-10">
                         <p class="text-xl text-blue-700 font-bold items-center justify-center flex flex-col">
                             <span>Prix TTC : <span data-product-options-target="price">-</span> €</span>
                             <span class="text-sm text-neutral-500 mx-auto font-normal">Prix HT : <span data-product-options-target="priceht">-</span> €</span>

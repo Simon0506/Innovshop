@@ -32,6 +32,7 @@ export default class extends Controller {
             }
         }
         this.reviewFormTarget.classList.remove('hidden');
+        this.reviewFormTarget.scrollIntoView({ behavior: 'smooth' });
     }
 
     hideReviewForm() {

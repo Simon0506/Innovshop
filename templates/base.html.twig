@@ -3,9 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}Bienvenue sur votre boutique en ligne Innovshop !{% endblock %}</title>
         <link rel="icon" href="{{ asset('favicon.ico') }}">
-        <script src="https://kit.fontawesome.com/274d342162.js" crossorigin="anonymous"></script>
+        
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
@@ -13,7 +13,7 @@
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
             <script src="https://js.stripe.com/clover/stripe.js"></script>
-
+            <script src="https://kit.fontawesome.com/274d342162.js" crossorigin="anonymous"></script>
         {% endblock %}
     </head>
     <body class="frontend w-full min-h-screen flex flex-col mx-auto" data-controller="cart-flash" data-cart-open="{{ app.flashes('cart_open')|length > 0 ? 'true' : 'false' }}">
@@ -24,12 +24,10 @@
                         <img src="{{ asset('uploads/icone.png') }}" alt="Logo InnovShop" class="md:hidden h-full w-[80px] object-cover">
                         <img src="{{ asset('uploads/logo.png') }}" alt="Logo InnovShop" class="hidden md:block h-full py-3 object-cover">
                     </a>
-                    <div id="categories" data-action="mouseenter->navbar#showCategoriesMenu" data-navbar-target="categoriesBtn" class="p-2 rounded-2xl hover:bg-linear-to-r hover:from-blue-700 hover:to-sky-500 hover:text-white cursor-pointer">
-                        <span class="text-2xl md:hidden"><i class="fa-solid fa-store"></i></span>
-                        <span class="hidden md:block">Boutique</span>
+                    <div id="categories" data-action="mouseenter->navbar#showCategoriesMenu" data-navbar-target="categoriesBtn" class="hidden md:block p-2 rounded-2xl hover:bg-linear-to-r hover:from-blue-700 hover:to-sky-500 hover:text-white cursor-pointer">Boutique
                     </div>
                     
-                    <a href="{{ path('app_contact') }}" class="p-2 rounded-2xl hover:bg-linear-to-r hover:from-blue-700 hover:to-sky-500 hover:text-white cursor-pointer">
+                    <a href="{{ path('app_contact') }}" class="hidden md:block p-2 rounded-2xl hover:bg-linear-to-r hover:from-blue-700 hover:to-sky-500 hover:text-white cursor-pointer">
                         <span class="text-2xl md:hidden"><i class="fa-solid fa-envelope"></i></span>
                         <span class="hidden md:block">Contact</span>
                     </a>
@@ -43,11 +41,11 @@
                     </div>
                 </form>
                 <div class="flex justify-center items-center md:gap-2 my-auto text-sm font-semibold pr-5">
-                    <div id="account" data-action="mouseenter->navbar#showAccountMenu" data-navbar-target="accountBtn" class="p-2 rounded-2xl hover:bg-linear-to-r hover:from-blue-700 hover:to-sky-500 hover:text-white cursor-pointer">
+                    <div id="account" data-action="mouseenter->navbar#showAccountMenu" data-navbar-target="accountBtn" class="hidden md:block p-2 rounded-2xl hover:bg-linear-to-r hover:from-blue-700 hover:to-sky-500 hover:text-white cursor-pointer">
                         <span class="text-2xl md:hidden"><i class="fa-solid fa-user"></i></span>
                         <span class="hidden md:block">Mon compte</span>
                     </div>
-                    <div id="cart" data-action="mouseenter->navbar#showCartMenu" data-navbar-target="cartBtn" class="p-2 rounded-2xl hover:bg-linear-to-r hover:from-blue-700 hover:to-sky-500 hover:text-white cursor-pointer relative">
+                    <div id="cart" data-action="mouseenter->navbar#showCartMenu" data-navbar-target="cartBtn" class="hidden md:block p-2 rounded-2xl hover:bg-linear-to-r hover:from-blue-700 hover:to-sky-500 hover:text-white cursor-pointer relative">
                         <span class="text-2xl md:hidden"><i class="fa-solid fa-cart-shopping"></i></span>
                         <span class="hidden md:block">Panier</span>
                         {% if cartQuantity > 0 %}
@@ -55,9 +53,20 @@
                         {% endif %}
                     </div>
                 </div>
+                <div class="md:hidden p-2 rounded-2xl hover:bg-linear-to-r hover:from-blue-700 hover:to-sky-500 hover:text-white cursor-pointer" id="mobileMenuBtn" data-action="click->navbar#toggleMobileMenu">
+                    <i class="fa-solid fa-bars"></i>
+                </div>
+
+                <!-- Menu mobile -->
+                <div id="mobileMenu" data-navbar-target="mobileMenu" class="hidden fixed top-20 right-0 w-1/2 bg-[#F7F7F7] shadow-md shadow-blue-700 flex flex-col gap-5 p-5 rounded-bl-3xl">
+                    <div id="mobileCategoriesBtn" data-action="click->navbar#toggleCategoriesMenu" class="p-2 rounded-2xl hover:bg-linear-to-r hover:from-blue-700 hover:to-sky-500 hover:text-white cursor-pointer font-semibold text-center">Boutique</div>
+                    <a href="{{ path('app_contact') }}" class="p-2 rounded-2xl hover:bg-linear-to-r hover:from-blue-700 hover:to-sky-500 hover:text-white cursor-pointer font-semibold text-center">Contact</a>
+                    <div id="mobileAccountBtn" data-action="click->navbar#toggleAccountMenu" class="p-2 rounded-2xl hover:bg-linear-to-r hover:from-blue-700 hover:to-sky-500 hover:text-white cursor-pointer font-semibold text-center">Mon compte</div>
+                    <div id="mobileCartBtn" data-action="click->navbar#toggleCartMenu" class="p-2 rounded-2xl hover:bg-linear-to-r hover:from-blue-700 hover:to-sky-500 hover:text-white cursor-pointer font-semibold text-center">Panier</div>
+                </div>
 
                 <!-- Déroulé des catégories -->
-                <div class="hidden fixed flex items-center gap-3 h-fit left-0 top-20 w-full shadow-md shadow-blue-700 bg-[#F7F7F7] p-5" id="categoriesMenu" data-navbar-target="categoriesMenu">
+                <div class="hidden fixed flex items-center gap-3 h-fit left-0 top-20 w-1/2 md:w-full shadow-md shadow-blue-700 bg-[#F7F7F7] p-5 rounded-br-3xl md:rounded-br-none" id="categoriesMenu" data-navbar-target="categoriesMenu">
                     <ul class="w-full flex flex-col md:flex-row justify-center gap-10 items-center md:text-sm">
                         <li><a href="{{ path('app_products_all') }}" class="p-2 rounded-2xl hover:bg-linear-to-r hover:from-blue-700 hover:to-sky-500 hover:text-white font-semibold text-center">Tous les produits</a></li>
                         <li class="hidden md:block">||</li>
@@ -70,7 +79,7 @@
                 </div>
 
                 <!-- Déroulé du panier -->
-                <div id="cartMenu" data-navbar-target="cartMenu" class="hidden bg-[#F7F7F7] shadow-md shadow-blue-700 flex flex-col gap-5 fixed right-0 top-20 w-full md:max-w-[500px] mx-auto p-5 md:rounded-bl-3xl text-black">
+                <div id="cartMenu" data-navbar-target="cartMenu" class="hidden bg-[#F7F7F7] shadow-md shadow-blue-700 flex flex-col gap-5 fixed right-1/2 md:right-0 top-20 w-1/2 md:w-full md:max-w-[500px] mx-auto p-5 rounded-br-3xl md:rounded-br-none md:rounded-bl-3xl text-black">
                     <h3 class="font-semibold text-lg text-center">Mon panier</h3>
                     {% if cart and cart.orderLines|length > 0 %}
                         <div class="max-h-[160px] overflow-y-auto flex flex-col gap-1">
@@ -126,7 +135,7 @@
                 </div>
 
                 <!-- Déroulé du compte -->
-                <div id="accountMenu" data-navbar-target="accountMenu" class="hidden bg-[#F7F7F7] text-blue-700 shadow-md shadow-blue-700 flex flex-col gap-5 fixed right-0 top-20 w-full md:w-[300px] mx-auto md:rounded-bl-3xl">
+                <div id="accountMenu" data-navbar-target="accountMenu" class="hidden bg-[#F7F7F7] text-blue-700 shadow-md shadow-blue-700 flex flex-col gap-5 fixed right-1/2 md:right-0 top-20 w-1/2 md:w-[300px] mx-auto rounded-br-3xl md:rounded-br-none md:rounded-bl-3xl">
                     {% if not app.user %}
                         <p class="text-black text-center font-semibold mt-5">Aucun compte connecté.</p>
                         <span class="w-[50%] mx-auto border-b border-blue-700"></span>

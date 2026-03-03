@@ -7,7 +7,8 @@ export default class extends Controller {
         'accountMenu',
         'categoriesBtn',
         'cartBtn',
-        'accountBtn'
+        'accountBtn',
+        'mobileMenu',
     ];
 
     // ===== PROFIL =====
@@ -40,6 +41,37 @@ export default class extends Controller {
             this.cartMenuTarget.classList.add('hidden');
         }
         if (!this.accountMenuTarget.classList.contains('hidden')) {
+            this.accountMenuTarget.classList.add('hidden');
+        }
+    }
+
+    toggleMobileMenu() {
+        this.mobileMenuTarget.classList.toggle('hidden');
+    }
+
+    toggleCategoriesMenu() {
+        if (this.categoriesMenuTarget.classList.contains('hidden')) {
+            this.hideAllMenus();
+            this.categoriesMenuTarget.classList.remove('hidden');
+        } else {
+            this.categoriesMenuTarget.classList.add('hidden');
+        }
+    }
+
+    toggleCartMenu() {
+        if (this.cartMenuTarget.classList.contains('hidden')) {
+            this.hideAllMenus();
+            this.cartMenuTarget.classList.remove('hidden');
+        } else {
+            this.cartMenuTarget.classList.add('hidden');
+        }
+    }
+
+    toggleAccountMenu() {
+        if (this.accountMenuTarget.classList.contains('hidden')) {
+            this.hideAllMenus();
+            this.accountMenuTarget.classList.remove('hidden');
+        } else {
             this.accountMenuTarget.classList.add('hidden');
         }
     }

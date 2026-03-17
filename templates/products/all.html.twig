@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 {% block title %}Tous les produits{% endblock %}
 {% block body %}
-    <section class="flex w-full md:gap-10">
+    <section class="flex w-full">
         <div data-controller="filters" class="mb-10">
             <button data-action="filters#open" class="md:hidden fixed top-20 z-2 mt-5 ml-5 cursor-pointer rounded-full bg-white border border-sky-500 w-10 h-10">
                 <i class="fa-solid fa-sliders"></i>
@@ -48,38 +48,47 @@
                     Tous les produits
                 {% endif %}
             </h1>
-            <div class="flex flex-col sm:flex-row flex-wrap items-center gap-5 md:gap-10">
+            <div class="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] items-center gap-2">
             {% for row in products %}
                 {% set product = row[0] %}
-                <article class="rounded-3xl flex flex-col justify-between items-center bg-[#F7F7F7] border border-sky-500 hover:shadow-md hover:shadow-blue-700 w-3xs h-[300px] overflow-hidden">
-
-                    <div class="w-full overflow-hidden h-full">
+                <article class="rounded-3xl flex flex-col justify-between items-center bg-[#F7F7F7] border border-sky-500 hover:shadow-md hover:shadow-blue-700 h-[250px] overflow-hidden">
+                    <a href="{{ path('app_products_detail', {id: product.id, slug: product.slug }) }}" class="w-full overflow-hidden h-3/5">
                         {% if product.images|length > 0 %}
                             <img src="{{ asset('uploads/' ~ product.images|first) }}" alt="{{ product.title }}" class="object-cover w-full h-full">
                         {% else %}
                             <img src="{{ asset('uploads/no-photo.jpg') }}" alt="Image par défaut" class="object-cover w-full h-full">
                         {% endif %}
-                    </div>
-                    <div class="flex flex-col w-full bg-[#F7F7F7] border-t border-sky-500">
-                        <h3 class="w-full px-5 text-black text-sm font-semibold text-center py-2">
+                    </a>
+                    <div class="flex flex-col justify-between w-full h-2/5 bg-[#F7F7F7] border-t border-sky-500 py-3">
+                        <h3 class="w-full px-5 text-black text-sm font-semibold text-center line-clamp-1">
                             {{ product.title }}
                         </h3>
-                        <div class="flex justify-between items-center gap-2 pb-3 px-5 w-full h-[60px]">
-                            <p class="{% if product.stock > 0 %}font-semibold text-md {% else %} text-red-700 text-xs font-normal{% endif %}">
-                                {% if product.stock > 0 %}
-                                    {% if product.productVariants|length > 1 %}
-                                        <span class="text-xs font-normal">A partir de </span><br>
+                        {% set rating = ratings[product.id] ?? null %}
+                        <div class="flex items-center gap-2">
+                            <div class="text-yellow-500 text-xs">
+                                {% set avg = rating.averageRating|default(0) %}
+                                {% for i in 1..5 %}
+                                    {% if i <= avg|round(0, 'floor') %}
+                                        <i class="fa-solid fa-star"></i>
+                                    {% else %}
+                                        <i class="fa-regular fa-star"></i>
                                     {% endif %}
-                                    {{ product.price|number_format(2, ',', ' ') }} €
-                                {% else %}
-                                    Rupture de stock
-                                {% endif %}
-                            </p>
-                            <a href="{{ path('app_products_detail', {id: product.id, slug: product.slug }) }}"
-                            class="bg-linear-to-t from-sky-500 to-blue-700 hover:shadow-md hover:shadow-black text-white font-semibold rounded-3xl px-3 py-2 text-sm text-center">
-                                Voir le produit
-                            </a>
+                                {% endfor %}
+                            </div>
+                            <span class="text-sm text-gray-500">
+                                ({{ rating.reviewCount|default(0) }})
+                            </span>
                         </div>
+                        <p class="flex justify-end items-center gap-2 px-5 {% if product.stock > 0 %}font-semibold text-md{% else %} text-red-700 text-xs font-normal{% endif %}">
+                            {% if product.stock > 0 %}
+                                {% if product.productVariants|length > 1 %}
+                                    <span class="text-xs font-normal">A partir de </span>
+                                {% endif %}
+                                {{ product.price|number_format(2, ',', ' ') }} €
+                            {% else %}
+                                Rupture de stock
+                            {% endif %}
+                        </p>
                     </div>
                 </article> 
             {% endfor %}               

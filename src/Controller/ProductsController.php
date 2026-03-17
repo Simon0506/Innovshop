@@ -11,6 +11,7 @@ use App\Entity\User;
 use App\Repository\OptionGroupRepository;
 use App\Repository\OrdersRepository;
 use App\Repository\ProductsRepository;
+use App\Repository\ReviewsRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,16 +23,18 @@ use Symfony\Component\Routing\Attribute\Route;
 final class ProductsController extends AbstractController
 {
     #[Route('/all', name: 'all')]
-    public function products(ProductsRepository $productsRepository, OptionGroupRepository $optionGroupRepository, Request $request): Response
+    public function products(ProductsRepository $productsRepository, ReviewsRepository $reviewsRepository, OptionGroupRepository $optionGroupRepository, Request $request): Response
     {
         $query = $request->query->get('q', '');
         $request->getSession()->set('previous_url', $request->getUri());
         $sort = $request->query->get('sort');
         $filters = $request->query->all('filters');
         $products = $productsRepository->findFilteredProducts($filters, $sort, $query);
+        $ratings = $reviewsRepository->getRatingsForProducts($products);
         $optionGroups = $optionGroupRepository->findAll();
         return $this->render('products/all.html.twig', [
             'products' => $products,
+            'ratings' => $ratings,
             'optionGroups' => $optionGroups,
             'filters' => $filters,
             'sort' => $sort,
@@ -40,16 +43,18 @@ final class ProductsController extends AbstractController
     }
 
     #[Route('/category/{id}/{slug}', name: 'category')]
-    public function categoryProducts(Categories $category, Request $request, OptionGroupRepository $optionGroupRepository, ProductsRepository $productsRepository): Response
+    public function categoryProducts(Categories $category, Request $request, ReviewsRepository $reviewsRepository, OptionGroupRepository $optionGroupRepository, ProductsRepository $productsRepository): Response
     {
         $query = $request->query->get('q', '');
         $request->getSession()->set('previous_url', $request->getUri());
         $sort = $request->query->get('sort');
         $filters = $request->query->all('filters');
         $products = $productsRepository->findFilteredProducts($filters, $sort, $query, $category);
+        $ratings = $reviewsRepository->getRatingsForProducts($products);
         $optionGroups = $optionGroupRepository->findAll();
         return $this->render('products/category.html.twig', [
             'products' => $products,
+            'ratings' => $ratings,
             'category' => $category,
             'optionGroups' => $optionGroups,
             'filters' => $filters,

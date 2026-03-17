@@ -58,11 +58,83 @@
                 </div>
 
                 <!-- Menu mobile -->
-                <div id="mobileMenu" data-navbar-target="mobileMenu" class="hidden fixed top-20 right-0 w-1/2 bg-[#F7F7F7] shadow-md shadow-blue-700 flex flex-col gap-5 p-5 rounded-bl-3xl">
-                    <div id="mobileCategoriesBtn" data-action="click->navbar#toggleCategoriesMenu" class="p-2 rounded-2xl hover:bg-linear-to-r hover:from-blue-700 hover:to-sky-500 hover:text-white cursor-pointer font-semibold text-center">Boutique</div>
-                    <a href="{{ path('app_contact') }}" class="p-2 rounded-2xl hover:bg-linear-to-r hover:from-blue-700 hover:to-sky-500 hover:text-white cursor-pointer font-semibold text-center">Contact</a>
-                    <div id="mobileAccountBtn" data-action="click->navbar#toggleAccountMenu" class="p-2 rounded-2xl hover:bg-linear-to-r hover:from-blue-700 hover:to-sky-500 hover:text-white cursor-pointer font-semibold text-center">Mon compte</div>
-                    <div id="mobileCartBtn" data-action="click->navbar#toggleCartMenu" class="p-2 rounded-2xl hover:bg-linear-to-r hover:from-blue-700 hover:to-sky-500 hover:text-white cursor-pointer font-semibold text-center">Panier</div>
+                <div id="mobileMenu"
+                    data-navbar-target="mobileMenu"
+                    class="hidden md:hidden fixed top-20 left-0 w-full bg-[#F7F7F7] shadow-md shadow-blue-700 flex flex-col p-5 gap-3">
+
+                    <!-- BOUTIQUE -->
+                    <div>
+                        <button data-action="click->navbar#toggleMobileCategories"
+                                class="flex justify-between items-center w-full p-2 font-semibold cursor-pointer">
+                            Boutique
+                            <i data-navbar-target="categoriesArrow" class="fa-solid fa-chevron-down transition-transform duration-300"></i>
+                        </button>
+
+                        <div data-navbar-target="mobileCategoriesMenu"
+                            class="max-h-0 overflow-hidden transition-all duration-300">
+                            <ul class="flex flex-col gap-2 justify-center items-center">
+                                <li><a href="{{ path('app_products_all') }}">Tous les produits</a></li>
+                                {% for category in categories %}
+                                    {% if category.products|length > 0 %}
+                                        <li>
+                                            <a href="{{ path('app_products_category', {id: category.id, slug: category.slug }) }}" class="border-t border-gray-300 w-full block text-center py-2">
+                                                {{ category.name }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- COMPTE -->
+                    <div>
+                        <button data-action="click->navbar#toggleMobileAccount"
+                                class="flex justify-between items-center w-full p-2 font-semibold cursor-pointer">
+                            Mon compte
+                            <i data-navbar-target="accountArrow" class="fa-solid fa-chevron-down transition-transform duration-300"></i>
+                        </button>
+
+                        <div data-navbar-target="mobileAccountMenu"
+                            class="max-h-0 overflow-hidden transition-all duration-300 flex flex-col justify-center items-center gap-2">
+                            
+                            {% if not app.user %}
+                                <a href="{{ path('app_login') }}" class="block py-2">Se connecter</a>
+                            {% else %}
+                                <a href="{{path('app_user_profil')}}" class="block py-2">Mon profil</a>
+                                <a href="{{path('app_user_orders')}}" class="block py-2 border-t border-gray-300">Mes commandes</a>
+                                <a href="{{ path('app_logout')}}" class="block py-2 text-red-600 border-t border-gray-300">Déconnexion</a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- PANIER -->
+                    <div>
+                        <button data-action="click->navbar#toggleMobileCart"
+                                class="flex justify-between items-center w-full p-2 font-semibold cursor-pointer">
+                            Panier
+                            <i data-navbar-target="cartArrow" class="fa-solid fa-chevron-down transition-transform duration-300"></i>
+                        </button>
+
+                        <div data-navbar-target="mobileCartMenu"
+                            class="max-h-0 overflow-hidden transition-all duration-300 flex flex-col justify-center items-center">
+
+                            {% if cart and cart.orderLines|length > 0 %}
+                                <div class="flex flex-col justify-start gap-2 mt-2">
+                                    {% for line in cart.orderLines %}
+                                        <p class="text-sm border-b border-gray-300 py-2">{{ line.productVariant.title }} (x{{ line.quantity }})</p>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-sm mt-2 border-b border-gray-300 py-2">Panier vide</p>
+                            {% endif %}
+
+                            <a href="{{ path('app_user_cart') }}" class="block mt-3 text-white bg-linear-to-t from-sky-500 to-blue-700 rounded-full px-4 py-2 font-semibold">
+                                Voir mon panier
+                            </a>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- Déroulé des catégories -->

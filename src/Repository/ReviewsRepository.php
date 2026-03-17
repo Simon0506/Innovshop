@@ -16,28 +16,33 @@ class ReviewsRepository extends ServiceEntityRepository
         parent::__construct($registry, Reviews::class);
     }
 
-    //    /**
-    //     * @return Reviews[] Returns an array of Reviews objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('r.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function getRatingsForProducts(array $products): array
+    {
+        if (empty($products)) {
+            return [];
+        }
 
-    //    public function findOneBySomeField($value): ?Reviews
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        $productIds = array_map(fn($row) => $row[0]->getId(), $products);
+
+        $results = $this->createQueryBuilder('r')
+            ->select('IDENTITY(r.product) as productId')
+            ->addSelect('AVG(r.note) as averageRating')
+            ->addSelect('COUNT(r.id) as reviewCount')
+            ->where('r.product IN (:products)')
+            ->setParameter('products', $productIds)
+            ->groupBy('r.product')
+            ->getQuery()
+            ->getArrayResult();
+
+        $ratings = [];
+
+        foreach ($results as $row) {
+            $ratings[$row['productId']] = [
+                'averageRating' => round((float)$row['averageRating'], 1),
+                'reviewCount' => (int)$row['reviewCount']
+            ];
+        }
+
+        return $ratings;
+    }
 }

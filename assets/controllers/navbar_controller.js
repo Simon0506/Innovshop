@@ -9,6 +9,12 @@ export default class extends Controller {
         'cartBtn',
         'accountBtn',
         'mobileMenu',
+        'mobileCategoriesMenu',
+        'mobileCartMenu',
+        'mobileAccountMenu',
+        'categoriesArrow',
+        'cartArrow',
+        'accountArrow'
     ];
 
     // ===== PROFIL =====
@@ -74,5 +80,45 @@ export default class extends Controller {
         } else {
             this.accountMenuTarget.classList.add('hidden');
         }
+    }
+
+    toggleSection(menu, arrow) {
+        const isOpen = menu.classList.contains('max-h-[500px]');
+
+        // Ferme tout
+        this.closeAllMobileSections();
+
+        if (!isOpen) {
+            menu.classList.remove('max-h-0');
+            menu.classList.add('max-h-[500px]');
+
+            arrow.classList.add('rotate-180');
+        }
+    }
+
+    closeAllMobileSections() {
+        this.mobileCategoriesMenuTarget.classList.add('max-h-0');
+        this.mobileAccountMenuTarget.classList.add('max-h-0');
+        this.mobileCartMenuTarget.classList.add('max-h-0');
+
+        this.mobileCategoriesMenuTarget.classList.remove('max-h-[500px]');
+        this.mobileAccountMenuTarget.classList.remove('max-h-[500px]');
+        this.mobileCartMenuTarget.classList.remove('max-h-[500px]');
+
+        this.categoriesArrowTarget.classList.remove('rotate-180');
+        this.accountArrowTarget.classList.remove('rotate-180');
+        this.cartArrowTarget.classList.remove('rotate-180');
+    }
+
+    toggleMobileCategories() {
+        this.toggleSection(this.mobileCategoriesMenuTarget, this.categoriesArrowTarget);
+    }
+
+    toggleMobileCart() {
+        this.toggleSection(this.mobileCartMenuTarget, this.cartArrowTarget);
+    }
+
+    toggleMobileAccount() {
+        this.toggleSection(this.mobileAccountMenuTarget, this.accountArrowTarget);
     }
 }

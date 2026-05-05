@@ -1,16 +1,17 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
+    static targets = ["form"]
 
     submit() {
-        this.element.submit()
+        this.formTarget.submit()
     }
 
     open() {
-        filtersForm.classList.remove('hidden')
+        this.formTarget.classList.remove('hidden')
     }
 
     close() {
-        filtersForm.classList.add('hidden')
+        this.formTarget.classList.add('hidden')
     }
 }
